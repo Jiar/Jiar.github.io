@@ -1,0 +1,888 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+    
+    <entry>
+      <title><![CDATA[TCP四次挥手简介]]></title>
+      <url>/2017/08/24/TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E7%AE%80%E4%BB%8B/</url>
+      <content type="html"><![CDATA[<h1 id="TCP四次挥手简介"><a href="#TCP四次挥手简介" class="headerlink" title="TCP四次挥手简介"></a>TCP四次挥手简介</h1><p><a href="">简书阅读地址在这里</a></p>
+<p>阅读前提示：因为有部分知识会涉及到作者的另一篇博文《TCP三次握手简介》中的内容，建议先跳转阅读，<a href="http://blog.jiar.vip/2017/08/11/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E7%AE%80%E4%BB%8B">传送门在这里</a>。</p>
+<p><img src="/2017/08/24/TCP四次挥手简介/tcp_hand_wave_detail.png" alt="TCP四次挥手（原创图片）"></p>
+<a id="more"></a>
+<h3 id="TCP首部简介"><a href="#TCP首部简介" class="headerlink" title="TCP首部简介"></a>TCP首部简介</h3><p>TCP四次挥手同样也涉及到TCP首部的一些知识，先前在《TCP三次握手简介》中介绍过TCP头部的内容了，这里就不列举所有了，挥手主要涉及到<code>ACK</code>和<code>FIN</code>这两个标志比特位</p>
+<p><img src="/2017/08/24/TCP四次挥手简介/tcp_head.png" alt="TCP首部（图片来自网络）"></p>
+<ul>
+<li>ACK: 此标志表示应答域有效，就是说前面所说的TCP应答号将会包含在TCP数据包中。有两个取值: 0和1，为1的时候表示应答域有效，反之为0。</li>
+<li>FIN: 表示发送端已经达到数据末尾，也就是说双方的数据传送完成，没有数据可以传送了，发送FIN标志位的TCP数据包后，连接将被断开。这个标志的数据包也经常被用于进行端口扫描。</li>
+</ul>
+<h3 id="TCP四次挥手过程"><a href="#TCP四次挥手过程" class="headerlink" title="TCP四次挥手过程"></a>TCP四次挥手过程</h3><p>其实以下这张图片就能说明TCP四次挥手的过程以及握手两端状态的变化。</p>
+<p><img src="/2017/08/24/TCP四次挥手简介/tcp_hand_wave_detail.png" alt="TCP四次挥手（原创图片）"></p>
+<p>TCP协议是一种面向连接的、可靠的、基于字节流的运输层通信协议。TCP是全双工模式，这就意味着，当A发出FIN报文段时，只是表示A已经没有数据要发送了，A告诉B，它的数据已经全部发送完毕了；但是，这个时候A还是可以接受来自B的数据；当B返回ACK报文段时，表示B已经知道A没有数据发送了，但是B还是可以发送数据到A的；当B也发送了FIN报文段时，这个时候就表示B也没有数据要发送了，B就会告诉A自己也没有数据要发送了，之后彼此就会愉快的中断这次TCP连接。</p>
+<h4 id="挥手过程"><a href="#挥手过程" class="headerlink" title="挥手过程"></a>挥手过程</h4><ul>
+<li><p>第一次挥手: 主动关闭方(可以使客户端，也可以是服务器端，这里标记为：A)，将FIN置为1，ACK置为1，Seq(Sequence Number)设置为X<code>为上一次对方传送过来的Ack(Acknowledgment Number)值</code>，Ack(Acknowledgment Number)设置为Y<code>为上一次对方传过来的Seq(Sequence Number)值+1</code>。设置好以上值后，将数据发送至被动关闭方(这里标记为：B)。然后A进入FIN_WAIT_1状态。</p>
+</li>
+<li><p>第二次挥手：B收到了A发送的FIN报文段，向A回复，将ACK置为1，Ack(Acknowledgment Number)设置为X<code>第一次挥手中的Seq(Sequence Number)值</code>+1，Seq(Sequence Number)设置为Y<code>第一次挥手中的Ack(Acknowledgment Number)值</code>。然后B进入CLOSE_WAIT状态，A收到B的回复后，进入FIN_WAIT_2状态。</p>
+</li>
+<li><p>第三次挥手：B再次向A发送报文，将FIN置为1，ACK置为1，Ack(Acknowledgment Number)设置为X+1<code>第二次挥手中的Ack(Acknowledgment Number)值</code>，Seq(Sequence Number)设置为Y<code>第二次挥手中的Seq(Sequence Number)值</code>。然后B进入LAST_ACK状态，A收到B的报文后，进入TIME_WAIT状态。</p>
+</li>
+<li><p>第四次挥手：A收到B发送的FIN报文段，像B回复，将ACK置为1，Ack(Acknowledgment Number)设置为Y<code>第三次挥手中的Seq(Sequence Number)值</code>+1，Seq(Sequence Number)设置为X+1<code>第三次挥手中的Ack(Acknowledgment Number)值</code>。然后A进入TIME_WAIT状态，B在收到报文后进入CLOSED状态，A在发送完报文等待了2MSL时间后进入CLOSED状态。</p>
+</li>
+</ul>
+<h4 id="状态变化"><a href="#状态变化" class="headerlink" title="状态变化"></a>状态变化</h4><ul>
+<li><p>ESTABLISHED：已建立连接</p>
+</li>
+<li><p>FIN_WAIT_1和FIN_WAIT_2：FIN_WAIT_1和FIN_WAIT_2的意义在于等待B发送FIN报文（B在第三次挥手发送了FIN报文）。</p>
+</li>
+<li><p>FIN_WAIT_1：A发送给B报文，请求关闭连接，然后A便进入这个状态，这个时候，表示A已经没有数据要发送了，不过A还能接收数据。</p>
+</li>
+<li><p>FIN_WAIT_2：这个时候，SOCKET处于半连接状态，即A要求关闭连接，但是还要稍微等会，等到A收到B发送的FIN报文，并相应了这个报文，并过了2MSL后，才真正关闭，这里只是做个关闭标记。</p>
+</li>
+<li><p>CLOSE_WAIT：这个过程是B在等待自己发送FIN报文。当A发送一个FIN报文给B后，B毫无疑问应该立刻回复ACK报文，此时B进入这个状态。接下来，B会观察自己是否还有数据没有发送给A，如果有，先把数据发送给A，再发送FIN报文；如果没有，那么B直接发送FIN报文给A。其实这个状态下，B是在等待自己做完剩余的工作，然后再准备结束关闭连接。</p>
+</li>
+<li><p>LAST_ACK：这个状态是B在发送完FIN报文后，等待A的响应。如果接收到A的响应，则进入CLOSED状态。</p>
+</li>
+<li><p>TIME_WAIT：A收到了B发送的FIN报文，用ACK报文进行回复。然后等待2MSL时长后，A进入CLOSED状态。如果A在FIN_WAIT_1状态下，同时收到了B的FIN标志和ACK标志的报文，则A可以直接进入到TIME_WAIT状态，而无须经过FIN_WAIT_2状态。</p>
+</li>
+</ul>
+<h3 id="为什么-TIME-WAIT-状态要等待-2MSL-之后才关闭连接"><a href="#为什么-TIME-WAIT-状态要等待-2MSL-之后才关闭连接" class="headerlink" title="为什么 TIME_WAIT 状态要等待 2MSL 之后才关闭连接"></a>为什么 TIME_WAIT 状态要等待 2MSL 之后才关闭连接</h3><ul>
+<li><p>2MSL表示两个MSL的时长，MSL全称为Maximum Segment Life，表示TCP 对TCP Segment 生存时间的限制。</p>
+</li>
+<li><p>为了保证A发送的最后一个ACK报文段能够到达B。这个ACK报文段有可能丢失，因而使处在LAST_ACK状态的B收不到对自己已发送的FIN+ACK报文段的确认。B会超时重传这个FIN+ACK报文段。而A就能在2MSL时间内收到这个重传的FIN+ACK报文段。接着A重传一次确认，重新启动2MSL计时器。最后A和B都正常进入到CLOSED状态。如果A在TIME_WAIT状态不等待一段时间，而是在发送完ACK报文段后立即释放连接，那么就无法收到B重传的FIN+ACK报文段，因而也不会在发送一次确认报文段。这样，B就无法按照正常步骤进入CLOSED状态。</p>
+</li>
+<li><p>防止已失效的连接请求报文段出现在本连接中。A在发送完最后一个ACK报文段后，在经过2MSL，就可以使本连接持续的时间内所产生的所有报文段都从网络中消失。这样就可以使下一个新的连接中不会出现这种旧的连接请求报文段。</p>
+</li>
+</ul>
+<h3 id="为什么要四次挥手"><a href="#为什么要四次挥手" class="headerlink" title="为什么要四次挥手"></a>为什么要四次挥手</h3><p>我在《TCP三次握手简介》得出过这样一个结论：<code>三次握手的本质是：将“四次握手”中的第二次、第三次握手合为一次，因为“四次握手”中的第二次、第三次握手都是由B向A传递报文，而且这两次发送报文的目的允许这两次报文合并为一次。</code>那么，TCP四次挥手中的第二次、第三次挥手，能否也能合为一次呢？</p>
+<p>答案是否定的。将TCP四次挥手中的第二次、第三次挥手，合为一次。也就是将CLOSE_WAIT状态的停留时间变为0。然而，B之所以存在CLOSE_WAIT状态，是因为B可能还存在着需要发送给A但是未发送的数据，如果存在着这些数据，那么这个状态的时间，就是用来发送这些数据的，所以，TCP四次挥手中的第二次、第三次挥手无法合并为一次。所以，也就无法实现“TCP三次挥手”。</p>
+<h3 id="实践-抓包分析"><a href="#实践-抓包分析" class="headerlink" title="实践(抓包分析)"></a>实践(抓包分析)</h3><p>接下来我们通过网络抓包的方式来了解TCP的三次握手。我这里使用的抓包软件是<code>Wireshark</code>。</p>
+<ul>
+<li><p>打开<code>Wireshark</code>，选择需要捕获的网络。<br><img src="/2017/08/24/TCP四次挥手简介/wireshark_welcome.png" alt="wireshark_welcome"></p>
+</li>
+<li><p>进入到主界面<br><img src="/2017/08/24/TCP四次挥手简介/wireshark_main.png" alt="wireshark_main"></p>
+</li>
+<li><p>找到TCP四次挥手<br><img src="/2017/08/24/TCP四次挥手简介/wireshark_tcp_wave.png" alt="wireshark_tcp_wave"><br>观察<code>Wireshark</code>上部已经捕获的网络数据包列表部分，看<code>Info</code>部分，能找到相对连续的四列(分别显示<code>A -&gt; B [FIN, ACK]...</code>、<code>B -&gt; A [ACK]...</code>、<code>B -&gt; A [FIN, ACK]...</code>、<code>A -&gt; B [ACK]...</code>)，便是TCP的四次挥手，在找的时候，注意<code>Source</code>栏和<code>Destination</code>栏中的ip地址的相对应，以及<code>Info</code>栏中的端口的对应。在<code>Wireshark</code>直接寻找四次挥手比寻找三次挥手要难得多。再下一篇文章中，我将会展示如何快速找到一组SOCKET的握手和挥手信息。</p>
+</li>
+<li><p>查看第一次挥手的详情<br><img src="/2017/08/24/TCP四次挥手简介/wireshark_tcp_wave_first.png" alt="wireshark_tcp_wave_first"></p>
+</li>
+<li><p>查看第二次挥手的详情<br><img src="/2017/08/24/TCP四次挥手简介/wireshark_tcp_wave_second.png" alt="wireshark_tcp_wave_second"></p>
+</li>
+<li><p>查看第三次挥手的详情<br><img src="/2017/08/24/TCP四次挥手简介/wireshark_tcp_wave_third.png" alt="wireshark_tcp_wave_third"></p>
+</li>
+<li><p>查看第四次挥手的详情<br><img src="/2017/08/24/TCP四次挥手简介/wireshark_tcp_wave_fourth.png" alt="wireshark_tcp_wave_fourth"></p>
+</li>
+</ul>
+<p>选中每次一的挥手数据包，点击下方的<code>Transmission Control Protocol(TCP)</code>，即可显示每次TCP握手的详情。在详情中，我们展开<code>Flags</code>，可以看到比特标志位是否有被设置的情况。<br>我们能发现，实践中的TCP状态情况，跟上面提到的理论是一致的。</p>
+<ul>
+<li>第一次挥手: [FIN, ACK] Seq=161 Ack=734</li>
+<li>第二次挥手: [ACK] Seq=734 Ack=162</li>
+<li>第三次挥手: [FIN, ACK] Seq=734 Ack=162</li>
+<li>第四次挥手: [ACK] Seq=162 Ack=735</li>
+</ul>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>感谢下列作者的分享</p>
+<blockquote>
+<ul>
+<li><a href="https://github.com/jawil/blog/issues/14" target="_blank" rel="external">通俗大白话来理解TCP协议的三次握手和四次分手 - jawil</a></li>
+<li><a href="http://ab3813.blog.51cto.com/10538332/1773751" target="_blank" rel="external">TCP的三次握手与四次挥手过程的每一步的具体状态变换</a></li>
+</ul>
+</blockquote>
+<h3 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h3><p>以上便是我这次关于<code>TCP四次挥手</code>方面的分享，同时也感谢我在文章中提到的博文的博主的分享。如果您在阅读本文时发现有错误或不恰当之处，欢迎在评论中指出。</p>
+<p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2017/08/24/TCP四次挥手简介/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> 计算机网络 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 计算机网络 </tag>
+            
+            <tag> TCP </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[TCP三次握手简介]]></title>
+      <url>/2017/08/11/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E7%AE%80%E4%BB%8B/</url>
+      <content type="html"><![CDATA[<h1 id="TCP三次握手简介"><a href="#TCP三次握手简介" class="headerlink" title="TCP三次握手简介"></a>TCP三次握手简介</h1><p><a href="">简书阅读地址在这里</a></p>
+<p>身处在互联网时代，计算机网络至关重要，然而却一直没有好好的了解这方面的知识。好在今年总算是毕业了，工作也相对稳定了，是时候拿起书籍阅读，提升自己。</p>
+<p>首先，就拿最近接触的TCP三次握手来小试，若本文存在错误或者不恰当指出，还望指出 :)</p>
+<p><img src="/2017/08/11/TCP三次握手简介/tcp_hand_shake_detail.png" alt="TCP三次握手（原创图片）"></p>
+<a id="more"></a>
+<h3 id="TCP首部简介"><a href="#TCP首部简介" class="headerlink" title="TCP首部简介"></a>TCP首部简介</h3><p>TCP三次握手涉及到TCP首部的一些知识，所有有必要先介绍下TCP首部的相关知识。如果嫌TCP首部内容太多，那么只要看下<code>ACK</code>和<code>SYN</code>这两个标志比特就行了（因为TCP三次握手过程主要用到这两个标志比特）。</p>
+<p><img src="/2017/08/11/TCP三次握手简介/tcp_head.png" alt="TCP首部（图片来自网络））"></p>
+<blockquote>
+<ul>
+<li>源端口(Source Port)和目的端口(Destination Port): 分别占用16位，表示源端口号和目的端口号。用于区别主机中的不同进程，而IP地址是用来区分不同的主机的，源端口号和目的端口号配合上IP首部中的源IP地址和目的IP地址就能唯一的确定一个TCP连接。</li>
+<li>序号(Sequence Number): 用来标识从TCP发端向TCP收端发送的数据字节流，它表示在这个报文段中的的第一个数据字节在数据流中的序号。主要用来解决网络报乱序的问题。</li>
+<li>确认号(Acknowledgment Number): 32位确认序列号包含发送确认的一端所期望收到的下一个序号，因此，确认序号应当是上次已成功收到数据字节序号加1。不过，只有当标志位中的ACK标志（下面介绍）为1时该确认序列号的字段才有效。主要用来解决不丢包的问题。</li>
+<li>数据偏移(Offset): 给出首部中32 bit字的数目，需要这个值是因为任选字段的长度是可变的。这个字段占4bit（最多能表示15个32bit的的字，即4*15=60个字节的首部长度），因此TCP最多有60字节的首部。然而，没有选项字段，正常的长度是20字节。</li>
+<li>保留: 占6位。保留为今后使用，目前置为0。</li>
+<li>标志比特(TCP Flags): TCP首部中有6个标志比特，它们中的多个可同时被设置为1，主要是用于操控TCP的状态机的，依次为URG，ACK，PSH，RST，SYN，FIN。每个标志位的意思如下: <ul>
+<li>URG: 此标志表示TCP包的紧急指针域（后面马上就要说到）有效，用来保证TCP连接不被中断，并且督促中间层设备要尽快处理这些数据。</li>
+<li>ACK: 此标志表示应答域有效，就是说前面所说的TCP应答号将会包含在TCP数据包中。有两个取值: 0和1，为1的时候表示应答域有效，反之为0。</li>
+<li>PSH: 这个标志位表示Push操作。所谓Push操作就是指在数据包到达接收端以后，立即传送给应用程序，而不是在缓冲区中排队。</li>
+<li>RST: 这个标志表示连接复位请求。用来复位那些产生错误的连接，也被用来拒绝错误和非法的数据包。</li>
+<li>SYN: 表示同步序号，用来建立连接。SYN标志位和ACK标志位搭配使用，当连接请求的时候，SYN=1，ACK=0。连接被响应的时候，SYN=1，ACK=1。这个标志的数据包经常被用来进行端口扫描。扫描者发送一个只有SYN的数据包，如果对方主机响应了一个数据包回来 ，就表明这台主机存在这个端口。但是由于这种扫描方式只是进行TCP三次握手的第一次握手，因此这种扫描的成功表示被扫描的机器不很安全，一台安全的主机将会强制要求一个连接严格的进行TCP的三次握手。</li>
+<li>FIN: 表示发送端已经达到数据末尾，也就是说双方的数据传送完成，没有数据可以传送了，发送FIN标志位的TCP数据包后，连接将被断开。这个标志的数据包也经常被用于进行端口扫描。</li>
+</ul>
+</li>
+<li>窗口(Window): 也就是有名的滑动窗口，用来进行流量控制。这是一个复杂的问题，这篇博文中并不会进行总结。</li>
+<li>校验和: 占2字节。该字段检验的范围包括首部和数据这两部分。由发端计算和存储，并由收端进行验证。</li>
+<li>紧急指针: 占2个字节，紧急指针仅在URG=1时才有意义，它指出本报文段中的紧急数据的字节数。当所有紧急数据处理完毕时，TCP就告诉应用程序恢复到正常操作。值得注意的是，即使窗口为0时也可发送紧急数据。</li>
+<li>选项: 长度可变，最长可达40字节，当没有选项时，TCP的首部长度是20字节。最大报文段长度MSS，MSS是指每一个TCP报文段中的数据字段的最大长度。</li>
+</ul>
+</blockquote>
+<h3 id="TCP三次握手过程"><a href="#TCP三次握手过程" class="headerlink" title="TCP三次握手过程"></a>TCP三次握手过程</h3><p>其实以下这张图片就能说明TCP三次握手的过程以及握手两端状态的变化。</p>
+<p><img src="/2017/08/11/TCP三次握手简介/tcp_hand_shake_detail.png" alt="TCP三次握手（原创图片）"></p>
+<ul>
+<li><p>第一次握手: 建立连接。客户端发送连接请求报文段，将SYN位置为1，Seq(Sequence Number)为X(由操作系统动态随机选取一个32位长的序列号)。然后，客户端进入SYN_SEND状态，等待服务器的确认。</p>
+</li>
+<li><p>第二次握手: 服务器收到客户端的SYN报文段。需要对这个SYN报文段进行确认，设置Ack(Acknowledgment Number)设置为X(第一次握手中的Seq的值)+1。同时，自己还要发送SYN请求信息，将SYN位置为1，Seq(Sequence Number)为Y(由操作系统动态随机选取一个32位长的序列号)。服务器端将上述所有信息一并发送给客户端，此时服务器进入SYN_RECV状态。</p>
+</li>
+<li><p>第三次握手: 客户端收到服务器的报文段。然后将Ack(Acknowledgment Number)设置为Y(第二次握手中的Seq的值)+1，Seq(Sequence Number)设置为X+1<code>第二次握手中的Ack(Acknowledgment Number)值</code>，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务器端都进入ESTABLISHED状态，完成TCP三次握手。</p>
+</li>
+</ul>
+<p>TCP的SYN同步标志位被设计成占用一个字节的编号，既然是一个字节的数据，按照TCP对有数据的TCP Segment必须确认的原则，所以可看到一端发送SYN，则另一端用ACK进行响应。</p>
+<h3 id="握手中断"><a href="#握手中断" class="headerlink" title="握手中断"></a>握手中断</h3><ul>
+<li>第一次握手中断: A发送给B的SYN中断，A会周期性超时重传，直到A收到B的确认响应。</li>
+<li>第二次握手中断: B发送给A的SYN、ACK中断，B会周期性超时重传，直到B收到A的确认响应。</li>
+<li>第三次握手中断: A发送给B的ACK中断，A不会重传。超时后，B会重传SYN信号(即回到第二次握手)，直到B收到A的确认响应。</li>
+</ul>
+<h3 id="为什么要三次握手"><a href="#为什么要三次握手" class="headerlink" title="为什么要三次握手"></a>为什么要三次握手</h3><p>以下是两种比较权威说法：</p>
+<blockquote>
+<ul>
+<li><p>在谢希仁著《计算机网络》第四版中讲“三次握手”的目的是“为了防止已失效的连接请求报文段突然又传送到了服务端，因而产生错误”。在另一部经典的《计算机网络》一书中讲“三次握手”的目的是为了解决“网络中存在延迟的重复分组”的问题。这两种不用的表述其实阐明的是同一个问题。谢希仁版《计算机网络》中的例子是这样的，“已失效的连接请求报文段”的产生在这样一种情况下：client发出的第一个连接请求报文段并没有丢失，而是在某个网络结点长时间的滞留了，以致延误到连接释放以后的某个时间才到达server。本来这是一个早已失效的报文段。但server收到此失效的连接请求报文段后，就误认为是client再次发出的一个新的连接请求。于是就向client发出确认报文段，同意建立连接。假设不采用“三次握手”，那么只要server发出确认，新的连接就建立了。由于现在client并没有发出建立连接的请求，因此不会理睬server的确认，也不会向server发送数据。但server却以为新的运输连接已经建立，并一直等待client发来数据。这样，server的很多资源就白白浪费掉了。采用“三次握手”的办法可以防止上述现象发生。例如刚才那种情况，client不会向server的确认发出确认。server由于收不到确认，就知道client并没有要求建立连接。”</p>
+</li>
+<li><p>在Google Groups的<a href="https://groups.google.com/forum/#!forum/pongba" target="_blank" rel="external">TopLanguage</a>中看到一帖讨论TCP“三次握手”觉得很有意思。贴主提出“<a href="https://groups.google.com/forum/#!topic/pongba/kF6O7-MFxM0/discussion" target="_blank" rel="external">TCP建立连接为什么是三次握手？</a>”的问题，在众多回复中，有<a href="https://groups.google.com/forum/#!msg/pongba/kF6O7-MFxM0/5S7zIJ4yqKUJ" target="_blank" rel="external">一条回复</a>写道：“这个问题的本质是, 信道不可靠, 但是通信双发需要就某个问题达成一致. 而要解决这个问题,  无论你在消息中包含什么信息, 三次通信是理论上的最小值. 所以三次握手不是TCP本身的要求, 而是为了满足”在不可靠信道上可靠地传输信息”这一需求所导致的. 请注意这里的本质需求,信道不可靠, 数据传输要可靠. 三次达到了, 那后面你想接着握手也好, 发数据也好, 跟进行可靠信息传输的需求就没关系了. 因此,如果信道是可靠的, 即无论什么时候发出消息, 对方一定能收到, 或者你不关心是否要保证对方收到你的消息, 那就能像UDP那样直接发送消息就可以了.”。</p>
+</li>
+</ul>
+</blockquote>
+<p>是不是觉得好难懂的样子，那么可以先看下下面我画的对“为什么要三次握手”的图解，再回头看上面的讲解。</p>
+<p><img src="/2017/08/11/TCP三次握手简介/tcp_hand_shake_three_times.png" alt="为什么是三次握手？（原创图片）"></p>
+<p>由图可以得出，三次握手的本质是：将“四次握手”中的第二次、第三次握手合为一次，因为“四次握手”中的第二次、第三次握手都是由B向A传递报文，而且这两次发送报文的目的允许这两次报文合并为一次。</p>
+<h3 id="实践-抓包分析"><a href="#实践-抓包分析" class="headerlink" title="实践(抓包分析)"></a>实践(抓包分析)</h3><p>接下来我们通过网络抓包的方式来了解TCP的三次握手。我这里使用的抓包软件是<code>Wireshark</code>。</p>
+<ul>
+<li><p>打开<code>Wireshark</code>，选择需要捕获的网络。<br><img src="/2017/08/11/TCP三次握手简介/wireshark_welcome.png" alt="wireshark_welcome"></p>
+</li>
+<li><p>进入到主界面<br><img src="/2017/08/11/TCP三次握手简介/wireshark_main.png" alt="wireshark_main"></p>
+</li>
+<li><p>找到TCP三次握手<br><img src="/2017/08/11/TCP三次握手简介/wireshark_tcp_shake.png" alt="wireshark_tcp_shake"><br>观察<code>Wireshark</code>上部已经捕获的网络数据包列表部分，看<code>Info</code>部分，能找到相对连续的三列(分别显示<code>A -&gt; B [SYN]...</code>、<code>B -&gt; A [SYN, ACK]...</code>、<code>A -&gt; B [ACK]...</code>)，便是TCP的三次握手，在找的时候，注意<code>Source</code>栏和<code>Destination</code>栏中的ip地址的相对应，以及<code>Info</code>栏中的端口的对应。</p>
+</li>
+<li><p>查看第一次握手的详情<br><img src="/2017/08/11/TCP三次握手简介/wireshark_tcp_shake_first.png" alt="wireshark_tcp_shake_first"></p>
+</li>
+<li><p>查看第二次握手的详情<br><img src="/2017/08/11/TCP三次握手简介/wireshark_tcp_shake_second.png" alt="wireshark_tcp_shake_second"></p>
+</li>
+<li><p>查看第三次握手的详情<br><img src="/2017/08/11/TCP三次握手简介/wireshark_tcp_shake_third.png" alt="wireshark_tcp_shake_third"></p>
+</li>
+</ul>
+<p>选中每次一的握手数据包，点击下方的<code>Transmission Control Protocol(TCP)</code>，即可显示每次TCP握手的详情。在详情中，我们展开<code>Flags</code>，可以看到比特标志位是否有被设置的情况。<br>我们能发现，实践中的TCP状态情况，跟上面提到的理论是一致的。</p>
+<ul>
+<li>第一次握手: [SYN] Seq=0</li>
+<li>第二次握手: [SYN, ACK] Seq=0 Ack=1</li>
+<li>第三次握手: [ACK] Seq=1 Ack=1</li>
+</ul>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>感谢下列作者的分享</p>
+<blockquote>
+<ul>
+<li><a href="https://github.com/jawil/blog/issues/14" target="_blank" rel="external">通俗大白话来理解TCP协议的三次握手和四次分手 - jawil</a></li>
+<li><a href="http://www.cnblogs.com/techzi/archive/2011/10/18/2216751.html" target="_blank" rel="external">TCP连接建立过程中为什么需要“三次握手” - TechZi</a></li>
+<li><a href="https://zhihu.com/question/24853633/answer/115173386" target="_blank" rel="external">TCP 为什么是三次握手，为什么不是两次或四次？ - 回答作者: 车小胖</a></li>
+<li><a href="http://www.voidcn.com/blog/xifeijian/article/p-633810.html" target="_blank" rel="external">TCP为什么需要3次握手与4次挥手 - xifeijian</a></li>
+<li><a href="http://ab3813.blog.51cto.com/10538332/1773751" target="_blank" rel="external">TCP的三次握手与四次挥手过程的每一步的具体状态变换 - 阿铭铭</a></li>
+<li><a href="http://blog.sina.com.cn/s/blog_7f2a66c70102v5ry.html" target="_blank" rel="external">TCP报文段的首部格式 - wszddup</a></li>
+<li><a href="http://www.jianshu.com/p/0c4828e3b100" target="_blank" rel="external">TCP - x_zhaohu</a></li>
+<li><a href="http://www.jianshu.com/p/afa438cb7d73" target="_blank" rel="external">使用抓包工具分析TCP三次握手过程 - 嘿嘿_小余同学</a></li>
+</ul>
+</blockquote>
+<h3 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h3><p>以上便是我这次关于<code>TCP三次握手</code>方面的分享，同时也感谢我在文章中提到的博文的博主的分享。如果您在阅读本文时发现有错误或不恰当之处，欢迎在评论中指出。</p>
+<p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2017/08/11/TCP三次握手简介/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> 计算机网络 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 计算机网络 </tag>
+            
+            <tag> TCP </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[适配Xcode9.0-beta与Swift4.0]]></title>
+      <url>/2017/06/09/%E9%80%82%E9%85%8DXcode9-0-beta%E4%B8%8ESwift4.0/</url>
+      <content type="html"><![CDATA[<h1 id="适配Xcode9-0-beta与Swift4-0"><a href="#适配Xcode9-0-beta与Swift4-0" class="headerlink" title="适配Xcode9.0-beta与Swift4.0"></a>适配Xcode9.0-beta与Swift4.0</h1><p><a href="http://www.jianshu.com/p/1f702d59e54b" target="_blank" rel="external">简书阅读地址在这里</a></p>
+<p>这几天苹果在开<code>WWDC2017</code>大会，期间放出了<code>Xcode9.0-beta</code>以及<code>Swift4</code>。为了响应苹果爸爸的号召，我果断下载了<code>Xcode9.0-beta</code>，并在项目中拉出了新的分支，准备搞事。</p>
+<p><img src="/2017/06/09/适配Xcode9-0-beta与Swift4.0/Xcode9.0-beta-icon.png" alt="Xcode9.0-beta"></p>
+<a id="more"></a>
+<h2 id="如何适配"><a href="#如何适配" class="headerlink" title="如何适配"></a>如何适配</h2><p><code>Xcode9.0-beta</code>内置的<code>Swift</code>版本不止一个，它同时支持<code>Swift4.0</code>和<code>Swift3.2</code>。而我们正在用的<code>Xcode8</code>，最高只支持<code>Swift3.1</code>。基于这个事实，我先拉一个<code>Xcode9.0-beta-Swift3.2</code>的分支，待适配好<code>Swift3.2</code>后，再起分支<code>Xcode9.0-beta-Swift4.0</code>去支持<code>Swift4.0</code>。</p>
+<h3 id="适配Swift3-2"><a href="#适配Swift3-2" class="headerlink" title="适配Swift3.2"></a>适配<code>Swift3.2</code></h3><p>首先，对于<code>Swift3.2</code>，我的理解是：既然版本命名为<code>3.2</code>，那么应该只是基于<code>3.1</code>版本上的微调（我去查<code>Swift</code>，查到更多的是关于<code>Swift4.0</code>方面的信息）。适配<code>Swift3.2</code>的过程中，我的项目代码不需要任何改动，唯一出问题的是一个第三方库：<a href="https://github.com/xmartlabs/Eureka" target="_blank" rel="external">Eureka</a>，报错的原因是<code>Collection</code>协议的<code>subscript</code>返回值从<code>Array</code>变成了<code>ArraySlice</code>，关于这个问题，已有人在<a href="https://github.com/xmartlabs/Eureka" target="_blank" rel="external">Eureka</a>的issues中提出(<a href="https://github.com/xmartlabs/Eureka/issues/1082" target="_blank" rel="external">#1082</a>)。随后有人<a href="https://github.com/xmartlabs/Eureka/commit/89b0326fe79aeec1f9fef90a4f57c95bd1931089" target="_blank" rel="external">commit</a>修复了这个问题，并开出新分支来适配<code>Swift3.2</code>。</p>
+<p><img src="/2017/06/09/适配Xcode9-0-beta与Swift4.0/Eureka-commit.jpeg" alt="Eureka-commit"></p>
+<p>最后，我在<code>Podfile</code>中修改<code>pod &#39;Eureka&#39;</code>为<code>pod &#39;Eureka&#39;, :git =&gt; &#39;https://github.com/xmartlabs/Eureka.git&#39;, :branch =&gt; &#39;swift3.2&#39;</code>，完成了适配<code>Swift3.2</code>。</p>
+<p>由此可见，适配<code>Swift3.2</code>几乎是没有什么压力的，我也就看到<code>Collection</code>协议的<code>subscript</code>返回值变动这个情况。</p>
+<h3 id="适配Swift4-0"><a href="#适配Swift4-0" class="headerlink" title="适配Swift4.0"></a>适配<code>Swift4.0</code></h3><p>并不是所有库都能做到及时支持<code>Swift4.0</code>，更何况是在现在连<code>Xcode9</code>也还是<code>beta</code>的状态，所以我们仅能做到将自己的业务代码（主工程代码）部分升级到<code>Swift4.0</code>，然后同时保留各种<code>pod</code>库在<code>Swift3.2</code>版本。没办法，谁叫<code>Swift4.0</code>也还无法做到<code>ABI</code>兼容呢（但愿能在<code>Swift5</code>之前实现吧）。至于我说的同时使用两个版本的<code>Swift</code>，这是没问题的，<code>Xcode9</code>支持在项目中同时使用<code>Swift3.2</code>和<code>Swift4.0</code>。</p>
+<h4 id="具体要怎么做呢？-修改Swift版本"><a href="#具体要怎么做呢？-修改Swift版本" class="headerlink" title="具体要怎么做呢？(修改Swift版本)"></a>具体要怎么做呢？(修改<code>Swift</code>版本)</h4><p>第一步，如下图指定主工程的<code>Swift</code>版本为<code>4.0</code><br><img src="/2017/06/09/适配Xcode9-0-beta与Swift4.0/Project-Build-Settings-Swift-Language-Version.png" alt="Project-Build-Settings-Swift-Language-Version"><br>第二步，如下所示，在<code>Podfile</code>文件的最下方加入如下代码，指定<code>pod</code>库的<code>Swift</code>版本为<code>3.2</code>(这样会使得所有的第三方<code>pod</code>库的<code>Swift</code>版本都为<code>3.2</code>)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">post_install do |installer|</div><div class="line">  installer.pods_project.targets.each do |target|</div><div class="line">    target.build_configurations.each do |config|</div><div class="line">      config.build_settings[&apos;SWIFT_VERSION&apos;] = &apos;3.2&apos;</div><div class="line">    end </div><div class="line">  end</div><div class="line">end</div></pre></td></tr></table></figure></p>
+<h4 id="做完以上处理，剩下的就是主工程中的代码修改了。"><a href="#做完以上处理，剩下的就是主工程中的代码修改了。" class="headerlink" title="做完以上处理，剩下的就是主工程中的代码修改了。"></a>做完以上处理，剩下的就是主工程中的代码修改了。</h4><p>从<code>Swift3.2</code>到<code>Swift4.0</code>的过程，比从<code>Swift3.1</code>到<code>Swift3.2</code>的过程要麻烦一点，但是比当年从<code>Swift2.3</code>到<code>Swift3</code>的过程要好太多了。</p>
+<p>下面我列举一下<code>Swift3.2</code>到<code>Swift4.0</code>的改变(只是我项目中遇到的)：</p>
+<ul>
+<li><code>Swift4.0</code>中对于扩展的属性(包括实例属性、<code>static</code>属性、<code>class</code>属性)，都只能使用<code>get</code>方法，不可使用<code>set</code>方法</li>
+<li><code>Swift4.0</code>中不再允许复写扩展中的方法(包括实例方法、<code>static</code>方法、<code>class</code>方法)</li>
+<li><code>swift3</code>使用<code>#selector</code>指定的方法，只有当方法权限为<code>private</code>时需要加<code>@objc</code>修饰符，现在全都要加<code>@objc</code>修饰符</li>
+<li>字体方面的一些重命名(<code>NSFontAttributeName</code>重命名为<code>NSAttributedStringKey.font</code>、<code>NSForegroundColorAttributeName</code>重命名为<code>NSAttributedStringKey.foregroundColor</code>、<code>NSStrikethroughStyleAttributeName</code>重命名为<code>NSAttributedStringKey.strikethroughStyle</code>、<code>size(withAttributes:)</code>方法重命名为<code>size(withAttributes:)</code>)</li>
+<li>…</li>
+</ul>
+<h4 id="OC与Swift4-0混编才是坑"><a href="#OC与Swift4-0混编才是坑" class="headerlink" title="OC与Swift4.0混编才是坑"></a><code>OC</code>与<code>Swift4.0</code>混编才是坑</h4><p>由于历史原因，我负责的项目，还有好大一部分<code>OC</code>的代码，新写的<code>Swift</code>需要被<code>OC</code>调用。所以，问题来了…</p>
+<h5 id="OC调用Swift4-0问题一：编译不通过"><a href="#OC调用Swift4-0问题一：编译不通过" class="headerlink" title="OC调用Swift4.0问题一：编译不通过"></a><code>OC</code>调用<code>Swift4.0</code>问题一：编译不通过</h5><p>我在<code>Swift4</code>的代码中写了不少<code>class</code>和<code>extension</code>，有些也给<code>OC</code>调用。在<code>OC</code>的代码中，我们通过<code>#import &quot;ModuleName-Swift.h&quot;</code>导入了<code>Swift</code>文件，以给<code>OC</code>调用。如果是<code>Swift3.2</code>，一切都能正常工作，但是在<code>Swift4.0</code>上，编译通不过了。</p>
+<p>一：在<code>OC</code>中调用一个<code>Swift4.0</code>类的方法（包括实例方法、<code>static</code>方法、<code>class</code>方法），你需要：</p>
+<ul>
+<li>在该<code>Swift4.0</code>类前加上修饰符<code>@objc</code></li>
+<li>该<code>Swift4.0</code>类必须继承<code>NSObject</code>(否则，无法在前面加上修饰符<code>@objc</code>。当然，这里指的是普通类，<code>@objc</code>也是可以修饰<code>UI</code>开头的一系列<code>UIKit</code>框架下的<code>UI</code>类，只是修饰了这些类，不会产生什么影响)</li>
+<li>在需要调用的方法前加上修饰符<code>@objc</code><br>示例如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">@objc class SampleObject: NSObject &#123;</div><div class="line"></div><div class="line">    @objc func sampleFunc  &#123;</div><div class="line">        print(&quot;sampleFunc&quot;)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    @objc static func sampleStaticFunc  &#123;</div><div class="line">        print(&quot;sampleStaticFunc&quot;)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    @objc class func sampleClassFunc  &#123;</div><div class="line">        print(&quot;sampleClassFunc&quot;)</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>如此一来，便可在<code>OC</code>文件中调用，示例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#import &quot;OCSample.h&quot;</div><div class="line">#import &quot;ModuleName-Swift.h&quot;</div><div class="line"></div><div class="line">@implementation OCSample</div><div class="line"></div><div class="line">- (void)callSwiftFunc &#123;</div><div class="line">    // 调用实例方法</div><div class="line">    SampleObject *object = [[SampleObject alloc] init];</div><div class="line">    [object sampleFunc];</div><div class="line">    // 调用static方法</div><div class="line">    [SampleObject sampleStaticFunc];</div><div class="line">    // 调用class方法</div><div class="line">    [SampleObject sampleClassFunc];</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
+<p>二：在<code>OC</code>中调用一个<code>Swift4.0</code>扩展的属性（包括实例属性、<code>static</code>属性、<code>class</code>属性）、方法（包括实例方法、<code>static</code>方法、<code>class</code>法），你有如下两种选择方式：</p>
+<ul>
+<li>在该<code>Swift4.0</code>扩展前加上修饰符<code>@objc</code>(这样的话，该扩展下的所有的属性、方法，都可被<code>OC</code>调用)。</li>
+</ul>
+<p>示例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">@objc extension UIViewController &#123;</div><div class="line"></div><div class="line">    var name: String &#123;</div><div class="line">        reutrn &quot;name&quot;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    static var staticName: String &#123;</div><div class="line">        reutrn &quot;staticName&quot;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    class var className: String &#123;</div><div class="line">        reutrn &quot;className&quot;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    func nameFunc() &#123;</div><div class="line">        print(&quot;nameFunc&quot;)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    static func staticNameFunc() &#123;</div><div class="line">        print(&quot;staticNameFunc&quot;)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    class func classNameFunc() &#123;</div><div class="line">        print(&quot;classNameFunc&quot;)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在需要的属性、方法前直接加上<code>@objc</code>修饰，也可达到目的。</li>
+</ul>
+<p>示例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">extension UIViewController &#123;</div><div class="line"></div><div class="line">    @objc var name: String &#123;</div><div class="line">        reutrn &quot;name&quot;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    @objc static var staticName: String &#123;</div><div class="line">        reutrn &quot;staticName&quot;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    @objc class var className: String &#123;</div><div class="line">        reutrn &quot;className&quot;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    @objc func nameFunc() &#123;</div><div class="line">        print(&quot;nameFunc&quot;)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    @objc static func staticNameFunc() &#123;</div><div class="line">        print(&quot;staticNameFunc&quot;)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    @objc class func classNameFunc() &#123;</div><div class="line">        print(&quot;classNameFunc&quot;)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h5 id="OC调用Swift4-0问题二：运行时找不到属性"><a href="#OC调用Swift4-0问题二：运行时找不到属性" class="headerlink" title="OC调用Swift4.0问题二：运行时找不到属性"></a><code>OC</code>调用<code>Swift4.0</code>问题二：运行时找不到属性</h5><p>这个问题藏得比较深，恰巧项目中有着相关的实现，让我看出发现这个潜在因素。<br>项目中有这么一种实现：有一个<code>Swift4.0</code>的类，是继承<code>UIViewController</code>的。然后我在<code>OC</code>里面对这个继承而来的<code>UIViewController</code>进行操作，我用了<code>[viewController valueForKey:@&quot;iconURL&quot;]</code>这一<code>KVC</code>方法去获取这个自定义<code>UIViewController</code>中的<code>iconURL</code>这一属性的属性值。这种方式，编译时是无法检查出问题的。但是在运行时，问题就来了，找不到这个属性。因为这个属性没有暴露给<code>OC</code>来进行调用。</p>
+<p>解决方式：仅需要在自定义的<code>UIViewController</code>类中给需要暴露给<code>OC</code>调用的属性前加上<code>@objc</code>修饰符便可。如此一来，在<code>OC</code>代码中就能访问到这个属性。(注意：这里可不像上面提到的<code>extension</code>一样，在这个已定义的<code>UIViewController</code>类前面加上<code>@objc</code>修饰符没有任何意义)。</p>
+<p>示例如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">class SampleViewController: UIViewController &#123;</div><div class="line">    @objc var iconURL: String?</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>除了在<code>OC</code>里通过<code>valueForKey:</code>方法调用到一些未经过<code>@objc</code>修饰的<code>Swift4.0</code>的<code>UI</code>类的属性会导致<code>crash</code>。其他比如你在<code>Swift4.0</code>代码中，通过<code>setValuesForKeys</code>这种通过<code>KVC</code>来操作未经过<code>@objc</code>修饰的属性，也会导致<code>crash</code>。</p>
+<h5 id="关于混编方面的更多信息"><a href="#关于混编方面的更多信息" class="headerlink" title="关于混编方面的更多信息"></a>关于混编方面的更多信息</h5><p>更多关于混编方面的内容，可以访问查看Apple官方提供的这篇文章：<a href="https://developer.apple.com/library/content/documentation/Swift/Conceptual/BuildingCocoaApps/index.html#//apple_ref/doc/uid/TP40014216-CH2-ID0" target="_blank" rel="external">Using Swift with Cocoa and Objective-C (Swift 4)</a>，篇幅不少，不单单介绍了<code>Swift4.0</code>与<code>OC</code>的混用，也介绍了与<code>C</code>的<code>api</code>的交互、还有更多关于<code>@objc</code>修饰符的用法。</p>
+<h2 id="关于Xcode9-beta的更多"><a href="#关于Xcode9-beta的更多" class="headerlink" title="关于Xcode9-beta的更多"></a>关于<code>Xcode9-beta</code>的更多</h2><h3 id="Xcode9-beta局域网调试"><a href="#Xcode9-beta局域网调试" class="headerlink" title="Xcode9-beta局域网调试"></a><code>Xcode9-beta</code>局域网调试</h3><h4 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h4><ul>
+<li>必须是<code>Xcode9-beta</code></li>
+<li><code>iPhone</code>系统需<code>iOS11</code>以上</li>
+</ul>
+<h4 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h4><ol>
+<li>在<code>Xcode9-beta</code>菜单的<code>Window</code>选项中选择<code>Devices and Simulators</code></li>
+<li>通过连接线让你的<code>Mac</code>识别到你的<code>iPhone</code></li>
+<li>在<code>Devices and Simulators</code>面板的左侧<code>Connected</code>菜单中选择连接的设备，然后在顶部的<code>Devices</code>和<code>Simulators</code>选项中选择<code>Devices</code>(这里其实默认就是选择了<code>Devices</code>)，最后勾选<code>Connect via network</code>选项。</li>
+</ol>
+<p>来自<a href="https://stackoverflow.com/questions/44382841/how-to-do-wireless-debug-on-xcode-9-and-ios-11?answertab=votes#tab-top" target="_blank" rel="external"><code>stackoverflow</code>回答</a></p>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><h3 id="关于本文"><a href="#关于本文" class="headerlink" title="关于本文"></a>关于本文</h3><ul>
+<li>本文为作者这几天在<code>Xcode9-beta</code>以及<code>Swift4.0</code>方面的学习记录与分享，作者会视情况对内容进行补充。</li>
+<li>如果您在阅读本文中发现内容存在错误，希望您积极指出。如果您有其他建议，也欢迎在评论去区留言。</li>
+<li>作者接受指正，但是希望彼此之间保留敬意。</li>
+<li>欢迎转载，但请保留博文的原地址或者博文在简书上的地址。</li>
+</ul>
+<h3 id="关于本人"><a href="#关于本人" class="headerlink" title="关于本人"></a>关于本人</h3><p>比起 <a href="https://weibo.com/u/2268197591/" target="_blank" rel="external">微博@Jiar</a> ，更喜欢 <a href="https://twitter.com/JiarYoo/" target="_blank" rel="external">推特@JiarYoo</a> ，求一波关注。😝</p>
+<h3 id="微信订阅号"><a href="#微信订阅号" class="headerlink" title="微信订阅号"></a>微信订阅号</h3><p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2017/06/09/适配Xcode9-0-beta与Swift4.0/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> iOS </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> iOS </tag>
+            
+            <tag> Swift4 </tag>
+            
+            <tag> Xcode9.0-beta </tag>
+            
+            <tag> OC(Objective-C)与Swift4混编 </tag>
+            
+            <tag> OC(Objective-C)调用Swift4 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[JRAlertController]]></title>
+      <url>/2016/11/11/JRAlertController/</url>
+      <content type="html"><![CDATA[<h2 id="JRAlertController"><a href="#JRAlertController" class="headerlink" title="JRAlertController"></a>JRAlertController</h2><h3 id="JRAlertController-1"><a href="#JRAlertController-1" class="headerlink" title="JRAlertController"></a>JRAlertController</h3><p><a href="https://github.com/Jiar/JRAlertController/" target="_blank" rel="external">JRAlertController</a>：基于apple的UIAlertController控件api，用swift重新打造的UI控件，更符合主流app的风格。</p>
+<h3 id="JRAlertController总体效果图"><a href="#JRAlertController总体效果图" class="headerlink" title="JRAlertController总体效果图"></a>JRAlertController总体效果图</h3><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_Main.gif" alt="UIAlertController_Main"></p>
+<a id="more"></a>
+<h3 id="UIAlertController-历史"><a href="#UIAlertController-历史" class="headerlink" title="UIAlertController 历史"></a>UIAlertController 历史</h3><p>在日常iOS开发中，我们经常能遇到这种情况（我们需要在某个地方让用户做一个选择），比如说：一个博客，点击右上角的按钮后，你可以执行“修改博客”、“删除博客”两个操作。既然是这么常用的操作，Apple当然给我们提供了常用的控件，那就是UIAlertController。</p>
+<p><code>UIAlertController</code>自iOS8出现，在那之前，我们用的是<code>UIAlertView</code>和<code>UIActionSheet</code>。iOS8之后，<code>UIAlertView</code>与<code>UIActionSheet</code>合并为<code>UIAlertController</code>，并以一个<code>style</code>属性来区分原来的<code>UIAlertView</code>和<code>UIActionSheet</code>的作用，还有就是用闭包回调的方式代替了之前的代理（我觉得闭包回调的方式写起来方便多了）。</p>
+<h3 id="UIAlertController-不足"><a href="#UIAlertController-不足" class="headerlink" title="UIAlertController 不足"></a>UIAlertController 不足</h3><p>那么既然<code>UIAlertController</code>已经是在iOS8优化后的控件（至少api上优化了），那么为何还来个<code>JRAlertController</code>呢？</p>
+<hr>
+<p>在开发中我们会发现，<code>UIAlertController</code>有以下几个不足之处：</p>
+<p>1.无论是<code>alert</code>还是<code>sheet</code>下的界面，边角过于圆滑，尤其当<code>style</code>是<code>sheet</code>的时候，从底部弹出来那么一个过于圆滑的界面，反正我不觉得好看，不信你看微博、微信这些主流app是怎么做的<br>微博的效果：<br><img src="/2016/11/11/JRAlertController/weibo.jpeg" alt="weibo"></p>
+<p>2.点击背景部分，无法<code>dismiss UIAlertController</code></p>
+<p>3.<code>alert</code>样式下，添加过多的<code>UITextField</code>和<code>Action</code>后，界面显示丑陋。（虽然不会有这种需求，也不该在<code>UIAlertController</code>过量添加，毕竟<code>UIAlertController</code>适用于”短暂”操作，但是过多添加后，界面确实不好看，后面会有效果图）</p>
+<p>基于以上几点不足，我认为足以自定义一个控件来代替<code>UIAlertController</code>，所以<code>JRAlertController</code>诞生了。</p>
+<h3 id="JRAlertController-与-UIAlertController-的不同"><a href="#JRAlertController-与-UIAlertController-的不同" class="headerlink" title="JRAlertController 与 UIAlertController 的不同"></a>JRAlertController 与 UIAlertController 的不同</h3><p>我在开头提到过<code>UIAlertController</code>的<code>api</code>,它的<code>api</code>还是不错的，所以我在写<code>JRAlertController</code>的时候，几乎完全采用了<code>UIAlertController</code>的<code>api</code>，一方面<code>api</code>不错，另一方面方便大家从<code>UIAlertController</code>迁移到<code>JRAlertController</code>，基本上你只需要把原来<code>UIAlertController</code>部分的<code>UI</code>开头的改成<code>JR</code>就可以了，我提供的Demo中，大家便能很清晰的看到这一点。</p>
+<hr>
+<h5 id="还有的几处不同点："><a href="#还有的几处不同点：" class="headerlink" title="还有的几处不同点："></a>还有的几处不同点：</h5><p>1.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">// UIAlertController 的初始化方法</div><div class="line">public convenience init(title: String?, message: String?, preferredStyle: UIAlertControllerStyle)</div><div class="line"></div><div class="line">// JRAlertController 的初始化方法</div><div class="line">public convenience init(title: String? = nil, message: String? = nil, preferredStyle: JRAlertControllerStyle = .actionSheet)</div></pre></td></tr></table></figure></p>
+<p>你会发现，<code>JRAlertController</code>提供了<code>title</code>参数和<code>message</code>参数的默认值，恩……如果你不需要<code>title</code>或<code>message</code>中的某一个（或都不需要），这样可以帮你少写一点点代码。</p>
+<p>2.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// UIAlertController进入方法</div><div class="line">// 这里的alertController为UIAlertController的实例，self为当前UIViewController</div><div class="line">self.present(alertController, animated: true, completion: nil)</div><div class="line"></div><div class="line">// JRAlertController进入方法</div><div class="line">// 这里的alertController为JRAlertController的实例，self为当前UIViewController</div><div class="line">alertController.jr_show(onRootView: self)</div></pre></td></tr></table></figure></p>
+<p>至于这里为什么要做，这里涉及到<code>JRAlertController</code>从底部上移的动画效果。（目前我能想到的方法是在<code>JRAlertController</code>的<code>viewWillAppear</code>中执行一个上移动画，如果调用系统的<code>present</code>进入的话，如果又给animated参数设置true，那么<code>JRAlertController</code>的进入效果会比较丑陋。可能有朋友会问，为什么不使用iOS的转场动画，我有尝试去用过，但是也需要第一个执行<code>present</code>的<code>UIViewController</code>做很多其他的动作，写更多的代码。如果有朋友看了我的代码后，有更好的方式来处理进入效果，欢迎到<a href="https://github.com/Jiar/JRAlertController/" target="_blank" rel="external">本项目的Github地址</a>来<code>Pull requests</code>）</p>
+<p>3.<br><code>UIAlertController</code>里面有一个属性<code>preferredAction</code>，要求系统版本至少为iOS9。而在<code>JRAlertController</code>中，你只需要在iOS8下就可以使用了（如果不是<code>UIViewController</code>的<code>modalPresentationStyle</code>属性的<code>.overCurrentContext</code>值要求iOS8，我们就可以兼容到iOS7了）</p>
+<h3 id="JRAlertController-与-UIAlertController-相同点以及说明"><a href="#JRAlertController-与-UIAlertController-相同点以及说明" class="headerlink" title="JRAlertController 与 UIAlertController 相同点以及说明"></a>JRAlertController 与 UIAlertController 相同点以及说明</h3><p>因为<code>JRAlertController</code>是采用几乎和<code>UIAlertController</code>一样的<code>api</code>来实现的，所以<code>JRAlertController</code>的大体功能效果会和<code>UIAlertController</code>一样。同时也是为了方便打算使用<code>JRAlertController</code>的朋友们能够在迁移到<code>JRAlertController</code>的时候没有后顾之忧。</p>
+<hr>
+<h5 id="他们的相同点说明："><a href="#他们的相同点说明：" class="headerlink" title="他们的相同点说明："></a>他们的相同点说明：</h5><p>1.只有<code>alert</code>样式下，才可以添加<code>UITextField</code>。</p>
+<p>2.<code>action</code>也有样式，但是<code>cancel</code>样式的<code>action</code>只能添加一个，添加多了<code>assert</code>。</p>
+<p>3.<code>preferredAction</code>属性也只能在<code>alert</code>样式下才能使用。</p>
+<p>以上三点别问我为什么这么规定，Apple的<code>UIAlertController</code>就是这么定的。</p>
+<hr>
+<h5 id="其他说明："><a href="#其他说明：" class="headerlink" title="其他说明："></a>其他说明：</h5><p>1.<code>JRAlertController</code>的<code>preferredAction</code>属性补充说明：除了只能在<code>alert</code>样式下才能使用外，如果存在<code>UITextField</code>，那么在<code>UITextField</code>列表的最后一个<code>UITextField</code>的键盘中点击<code>return</code>按钮，将触发<code>preferredAction</code>回调，并且<code>dismiss</code>当前<code>JRAlertController</code>。</p>
+<p>2.<code>JRAlertController</code>里面会有一个属性是这样的：<code>open var textFields: [UITextField]?</code>。所有你添加的<code>UITextField</code>都会在这里。注意的是，<code>JRAlertController</code>已经对所以添加的<code>UITextField</code>进行了代理操作。如果你覆盖了代理，影响也不是很大，但是至少会影响你以下两点：</p>
+<p>①.在<code>UITextField</code>中点击键盘上<code>return</code>按钮时无法从当前<code>UITextField</code>进入到下一个<code>UITextField</code>。<br>②.如果当前<code>UITextField</code>已经是最后一个<code>UITextField</code>，同时你又设置了<code>preferredAction</code>，则无法触发<code>preferredAction</code>的回调，以及无法<code>dismiss</code>当前<code>JRAlertController</code>。</p>
+<p>3.如果需要在<code>JRAlertController</code>里，主动<code>dismiss</code>，建议调用<code>jr_dismiss()</code>。</p>
+<h3 id="JRAlertController-与-UIAlertController-Gif图效果对比"><a href="#JRAlertController-与-UIAlertController-Gif图效果对比" class="headerlink" title="JRAlertController 与 UIAlertController Gif图效果对比"></a>JRAlertController 与 UIAlertController Gif图效果对比</h3><p>说了那么多，来几张效果图对比下<code>JRAlertController</code>与<code>UIAlertController</code>的区别</p>
+<h4 id="JRAlertController-实现效果图"><a href="#JRAlertController-实现效果图" class="headerlink" title="JRAlertController 实现效果图"></a>JRAlertController 实现效果图</h4><h5 id="JRAlertController在alert样式下简单显示"><a href="#JRAlertController在alert样式下简单显示" class="headerlink" title="JRAlertController在alert样式下简单显示"></a>JRAlertController在alert样式下简单显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_alert_simple.gif" alt="JRAlertController_alert_simple"></p>
+<h5 id="JRAlertController在alert样式下复杂显示"><a href="#JRAlertController在alert样式下复杂显示" class="headerlink" title="JRAlertController在alert样式下复杂显示"></a>JRAlertController在alert样式下复杂显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_alert_multiple.gif" alt="JRAlertController_alert_multiple"></p>
+<h5 id="JRAlertController在sheet样式下简单显示"><a href="#JRAlertController在sheet样式下简单显示" class="headerlink" title="JRAlertController在sheet样式下简单显示"></a>JRAlertController在sheet样式下简单显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_sheet_simple.gif" alt="JRAlertController_sheet_simple"></p>
+<h5 id="JRAlertController在sheet样式下复杂显示"><a href="#JRAlertController在sheet样式下复杂显示" class="headerlink" title="JRAlertController在sheet样式下复杂显示"></a>JRAlertController在sheet样式下复杂显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_sheet_multiple.gif" alt="JRAlertController_sheet_multiple"></p>
+<h4 id="UIAlertController-实现效果图"><a href="#UIAlertController-实现效果图" class="headerlink" title="UIAlertController 实现效果图"></a>UIAlertController 实现效果图</h4><h5 id="UIAlertController在alert样式下简单显示"><a href="#UIAlertController在alert样式下简单显示" class="headerlink" title="UIAlertController在alert样式下简单显示"></a>UIAlertController在alert样式下简单显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_alert_simple.gif" alt="UIAlertController_alert_simple"></p>
+<h5 id="UIAlertController在alert样式下复杂显示"><a href="#UIAlertController在alert样式下复杂显示" class="headerlink" title="UIAlertController在alert样式下复杂显示"></a>UIAlertController在alert样式下复杂显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_alert_multiple.gif" alt="UIAlertController_alert_multiple"></p>
+<h5 id="UIAlertController在sheet样式下简单显示"><a href="#UIAlertController在sheet样式下简单显示" class="headerlink" title="UIAlertController在sheet样式下简单显示"></a>UIAlertController在sheet样式下简单显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_sheet_simple.gif" alt="UIAlertController_sheet_simple"></p>
+<h5 id="UIAlertController在sheet样式下复杂显示"><a href="#UIAlertController在sheet样式下复杂显示" class="headerlink" title="UIAlertController在sheet样式下复杂显示"></a>UIAlertController在sheet样式下复杂显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_sheet_multiple.gif" alt="UIAlertController_sheet_multiple"></p>
+<p>以上就是对<code>JRAlertController</code>的一些说明，下面放是官方性信息：</p>
+<hr>
+<h3 id="Requirements"><a href="#Requirements" class="headerlink" title="Requirements"></a>Requirements</h3><ul>
+<li>iOS 8.0+</li>
+<li>Xcode 8.0+</li>
+<li>Swift 3.0+</li>
+</ul>
+<h3 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h3><h4 id="CocoaPods"><a href="#CocoaPods" class="headerlink" title="CocoaPods"></a>CocoaPods</h4><p><a href="http://cocoapods.org" target="_blank" rel="external">CocoaPods</a> is a dependency manager for Cocoa projects. You can install it with the following command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ gem install cocoapods</div></pre></td></tr></table></figure>
+<blockquote>
+<p>CocoaPods 1.1.0+ is required to build JRAlertController 1.0.0</p>
+</blockquote>
+<p>To integrate JRAlertController into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">source <span class="string">'https://github.com/CocoaPods/Specs.git'</span></div><div class="line">platform <span class="symbol">:ios</span>, <span class="string">'8.0'</span></div><div class="line">use_frameworks!</div><div class="line"></div><div class="line">target <span class="string">'&lt;Your Target Name&gt;'</span> <span class="keyword">do</span></div><div class="line">    pod <span class="string">'JRAlertController'</span>, <span class="string">'~&gt; 1.0。0'</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>Then, run the following command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ pod install</div></pre></td></tr></table></figure>
+<h4 id="Manually"><a href="#Manually" class="headerlink" title="Manually"></a>Manually</h4><p>If you prefer not to use either of the aforementioned dependency managers, you can integrate JRAlertController into your project manually.</p>
+<h5 id="Embedded-Framework"><a href="#Embedded-Framework" class="headerlink" title="Embedded Framework"></a>Embedded Framework</h5><ul>
+<li><p>Open up Terminal, <code>cd</code> into your top-level project directory, and run the following command “if” your project is not initialized as a git repository:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git init</div></pre></td></tr></table></figure>
+</li>
+<li><p>Add JRAlertController as a git <a href="http://git-scm.com/docs/git-submodule" target="_blank" rel="external">submodule</a> by running the following command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git submodule add https://github.com/Jiar/JRAlertController.git</div></pre></td></tr></table></figure>
+</li>
+<li><p>Open the new <code>JRAlertController</code> folder, and drag the <code>JRAlertController.xcodeproj</code> into the Project Navigator of your application’s Xcode project.</p>
+<blockquote>
+<p>It should appear nested underneath your application’s blue project icon. Whether it is above or below all the other Xcode groups does not matter.</p>
+</blockquote>
+</li>
+<li><p>Select the <code>JRAlertController.xcodeproj</code> in the Project Navigator and verify the deployment target matches that of your application target.</p>
+</li>
+<li>Next, select your application project in the Project Navigator (blue project icon) to navigate to the target configuration window and select the application target under the “Targets” heading in the sidebar.</li>
+<li>In the tab bar at the top of that window, open the “General” panel.</li>
+<li>Click on the <code>+</code> button under the “Embedded Binaries” section.</li>
+<li><p>You will see two different <code>JRAlertController.xcodeproj</code> folders each with two different versions of the <code>JRAlertController.framework</code> nested inside a <code>Products</code> folder.</p>
+<blockquote>
+<p>It does not matter which <code>Products</code> folder you choose from, but it does matter whether you choose the top or bottom <code>JRAlertController.framework</code>.</p>
+</blockquote>
+</li>
+<li><p>Select the top <code>JRAlertController.framework</code> for iOS.</p>
+</li>
+<li><p>And that’s it!</p>
+<blockquote>
+<p>The <code>JRAlertController.framework</code> is automagically added as a target dependency, linked framework and embedded framework in a copy files build phase which is all you need to build on the simulator and a device.</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h3 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h3><h4 id="JRAlertController-alert-simple"><a href="#JRAlertController-alert-simple" class="headerlink" title="JRAlertController_alert_simple"></a>JRAlertController_alert_simple</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> alertController = <span class="type">JRAlertController</span>(title: <span class="string">"login tip"</span>, message: <span class="string">"please input account and password"</span>, preferredStyle: .alert)</div><div class="line"><span class="keyword">let</span> cancelAction = <span class="type">JRAlertAction</span>(title: <span class="string">"cancel"</span>, style: .cancel, handler:  &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"cancel"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> loginAction = <span class="type">JRAlertAction</span>(title: <span class="string">"login"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"login"</span>)</div><div class="line">&#125;)</div><div class="line">alertController.addAction(cancelAction)</div><div class="line">alertController.addAction(loginAction)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.keyboardType = .<span class="keyword">default</span></div><div class="line">    textField.placeholder = <span class="string">"please input account"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.keyboardType = .<span class="keyword">default</span></div><div class="line">    textField.isSecureTextEntry = <span class="literal">true</span></div><div class="line">    textField.placeholder = <span class="string">"please input password"</span></div><div class="line">&#125;)</div><div class="line"><span class="comment">// must use this function to show JRAlertController</span></div><div class="line"><span class="comment">// self is a UIControllerView</span></div><div class="line">alertController.jr_show(onRootView: <span class="keyword">self</span>)</div></pre></td></tr></table></figure>
+<h4 id="JRAlertController-alert-multiple"><a href="#JRAlertController-alert-multiple" class="headerlink" title="JRAlertController_alert_multiple"></a>JRAlertController_alert_multiple</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> alertController = <span class="type">JRAlertController</span>(title: <span class="string">"I am title,I am title,I am title,I am title,I am title"</span>, message: <span class="string">"I am message, I am message, I am message, I am message, I am message, I am message, I am message, I am message, I am message"</span>, preferredStyle: .alert)</div><div class="line"><span class="keyword">let</span> cancelAction = <span class="type">JRAlertAction</span>(title: <span class="string">"cancel"</span>, style: .cancel, handler:  &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"cancel"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> deleteAction = <span class="type">JRAlertAction</span>(title: <span class="string">"delete"</span>, style: .destructive, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"delete"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction = <span class="type">JRAlertAction</span>(title: <span class="string">"archive"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction1 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive1"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive1"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction2 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive2"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive2"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction3 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive3"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive3"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction4 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive4"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive4"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction5 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive5"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive5"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction6 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive6"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive6"</span>)</div><div class="line">&#125;)</div><div class="line">alertController.addAction(cancelAction)</div><div class="line">alertController.addAction(deleteAction)</div><div class="line">alertController.addAction(archiveAction)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .black</div><div class="line">    textField.text = <span class="string">"black"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .darkGray</div><div class="line">    textField.text = <span class="string">"darkGray"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .lightGray</div><div class="line">    textField.text = <span class="string">"lightGray"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.backgroundColor = .black</div><div class="line">    textField.textColor = .white</div><div class="line">    textField.text = <span class="string">"white"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .gray</div><div class="line">    textField.text = <span class="string">"gray"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .red</div><div class="line">    textField.text = <span class="string">"red"</span></div><div class="line">&#125;)</div><div class="line">alertController.addAction(archiveAction1)</div><div class="line">alertController.addAction(archiveAction2)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .green</div><div class="line">    textField.text = <span class="string">"green"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .blue</div><div class="line">    textField.text = <span class="string">"blue"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .cyan</div><div class="line">    textField.text = <span class="string">"cyan"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .yellow</div><div class="line">    textField.text = <span class="string">"yellow"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .magenta</div><div class="line">    textField.text = <span class="string">"magenta"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .orange</div><div class="line">    textField.text = <span class="string">"orange"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .purple</div><div class="line">    textField.text = <span class="string">"purple"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .brown</div><div class="line">    textField.text = <span class="string">"brown"</span></div><div class="line">&#125;)</div><div class="line">alertController.addAction(archiveAction3)</div><div class="line">alertController.addAction(archiveAction4)</div><div class="line">alertController.addAction(archiveAction5)</div><div class="line">alertController.addAction(archiveAction6)</div><div class="line">alertController.preferredAction  = archiveAction6</div><div class="line"><span class="comment">// must use this function to show JRAlertController</span></div><div class="line"><span class="comment">// self is a UIControllerView</span></div><div class="line">alertController.jr_show(onRootView: <span class="keyword">self</span>)</div></pre></td></tr></table></figure>
+<h4 id="JRAlertController-sheet-simple"><a href="#JRAlertController-sheet-simple" class="headerlink" title="JRAlertController_sheet_simple"></a>JRAlertController_sheet_simple</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">      <span class="keyword">let</span> alertController = <span class="type">JRAlertController</span>(title: <span class="string">"blog tip"</span>, message: <span class="string">"Please select the option to use the corresponding option to operate your blog"</span>, preferredStyle: .actionSheet)</div><div class="line"><span class="comment">// let alertController = JRAlertController(title: "blog tip")</span></div><div class="line"><span class="comment">// let alertController = JRAlertController(message: "Please select the option to use the corresponding option to operate your blog")</span></div><div class="line"><span class="comment">// let alertController = JRAlertController()</span></div><div class="line">      <span class="keyword">let</span> addAction = <span class="type">JRAlertAction</span>(title: <span class="string">"add"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">          (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">          <span class="built_in">print</span>(<span class="string">"add blog"</span>)</div><div class="line">      &#125;)</div><div class="line">      <span class="keyword">let</span> modifyAction = <span class="type">JRAlertAction</span>(title: <span class="string">"modify"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">          (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">          <span class="built_in">print</span>(<span class="string">"modify blog"</span>)</div><div class="line">      &#125;)</div><div class="line">      <span class="keyword">let</span> deleteAction = <span class="type">JRAlertAction</span>(title: <span class="string">"delete"</span>, style: .destructive, handler: &#123;</div><div class="line">          (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">          <span class="built_in">print</span>(<span class="string">"delete blog"</span>)</div><div class="line">      &#125;)</div><div class="line">      <span class="keyword">let</span> cancelAction = <span class="type">JRAlertAction</span>(title: <span class="string">"cancel"</span>, style: .cancel, handler:  &#123;</div><div class="line">          (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">          <span class="built_in">print</span>(<span class="string">"cancel"</span>)</div><div class="line">      &#125;)</div><div class="line">      alertController.addAction(addAction)</div><div class="line">      alertController.addAction(modifyAction)</div><div class="line">      alertController.addAction(deleteAction)</div><div class="line">      alertController.addAction(cancelAction)</div><div class="line">      <span class="comment">// must use this function to show JRAlertController</span></div><div class="line">      <span class="comment">// self is a UIControllerView</span></div><div class="line">      alertController.jr_show(onRootView: <span class="keyword">self</span>)</div></pre></td></tr></table></figure>
+<h4 id="JRAlertController-sheet-multiple"><a href="#JRAlertController-sheet-multiple" class="headerlink" title="JRAlertController_sheet_multiple"></a>JRAlertController_sheet_multiple</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> alertController = <span class="type">JRAlertController</span>(title: <span class="string">"I am title,I am title,I am title,I am title,I am title"</span>, message: <span class="string">"I am message, I am message, I am message, I am message, I am message, I am message, I am message, I am message, I am message"</span>, preferredStyle: .actionSheet)</div><div class="line"><span class="keyword">let</span> cancelAction = <span class="type">JRAlertAction</span>(title: <span class="string">"cancel"</span>, style: .cancel, handler: <span class="literal">nil</span>)</div><div class="line"><span class="keyword">let</span> deleteAction = <span class="type">JRAlertAction</span>(title: <span class="string">"delete"</span>, style: .destructive, handler: <span class="literal">nil</span>)</div><div class="line"><span class="keyword">let</span> archiveAction = <span class="type">JRAlertAction</span>(title: <span class="string">"archive"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction1 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive1"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive1"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction2 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive2"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive2"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction3 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive3"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive3"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction4 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive4"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive4"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction5 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive5"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive5"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction6 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive6"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive6"</span>)</div><div class="line">&#125;)</div><div class="line">alertController.addAction(cancelAction)</div><div class="line">alertController.addAction(deleteAction)</div><div class="line">alertController.addAction(archiveAction)</div><div class="line">alertController.addAction(archiveAction1)</div><div class="line">alertController.addAction(archiveAction2)</div><div class="line">alertController.addAction(archiveAction3)</div><div class="line">alertController.addAction(archiveAction4)</div><div class="line">alertController.addAction(archiveAction5)</div><div class="line">alertController.addAction(archiveAction6)</div><div class="line"><span class="comment">// must use this function to show JRAlertController</span></div><div class="line"><span class="comment">// self is a UIControllerView</span></div><div class="line">alertController.jr_show(onRootView: <span class="keyword">self</span>)</div></pre></td></tr></table></figure>
+<h3 id="License"><a href="#License" class="headerlink" title="License"></a>License</h3><p>JRAlertController is released under the Apache-2.0 license. See <a href="https://raw.githubusercontent.com/Jiar/JRAlertController/master/LICENSE" target="_blank" rel="external">LICENSE</a> for details.</p>
+<h3 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h3><p>本文完，大家如何喜欢<code>JRAlertController</code>，欢迎来<a href="https://github.com/Jiar/JRAlertController/" target="_blank" rel="external">JRAlertController</a>对本项目Star。读者在阅读本文时如有发现错误或不恰当指出，欢迎在评论中指出。如果读者还有一些相关方面的疑问，也欢迎在评论中提出。</p>
+<p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2016/11/11/JRAlertController/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> iOS </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> iOS </tag>
+            
+            <tag> Swift </tag>
+            
+            <tag> JRAlertController </tag>
+            
+            <tag> UIAlertController </tag>
+            
+            <tag> alert </tag>
+            
+            <tag> sheet </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[iOS项目持续集成]]></title>
+      <url>/2016/08/28/iOS%E9%A1%B9%E7%9B%AE%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90/</url>
+      <content type="html"><![CDATA[<h3 id="使用Jenkins持续集成"><a href="#使用Jenkins持续集成" class="headerlink" title="使用Jenkins持续集成"></a>使用Jenkins持续集成</h3><h4 id="使用Jenkins持续集成-1"><a href="#使用Jenkins持续集成-1" class="headerlink" title="使用Jenkins持续集成"></a>使用Jenkins持续集成</h4><p>最近老是看到关于使用Jenkins持续集成方面的文章，于是也去折腾了，稍作整理，这里分享下我是如何使用Jenkins持续集成iOS项目的。</p>
+<h5 id="相关博文"><a href="#相关博文" class="headerlink" title="相关博文"></a>相关博文</h5><ul>
+<li><a href="http://blog.fir.im/fir_im_weekly160505/" target="_blank" rel="external">fir.im weekly - 「 持续集成 」实践教程合集</a></li>
+<li><a href="http://blog.fir.im/testing_cd/" target="_blank" rel="external">从自动化测试到持续部署，你需要了解这些</a></li>
+<li><a href="http://www.jianshu.com/p/41ecb06ae95f" target="_blank" rel="external">手把手教你利用Jenkins持续集成iOS项目</a></li>
+<li><a href="http://www.jianshu.com/p/c69deb29720d" target="_blank" rel="external">一步一步构建iOS持续集成:Jenkins+GitLab+蒲公英+FTP</a></li>
+<li><a href="http://www.jianshu.com/p/269d8d66472d" target="_blank" rel="external"><em>jenkins</em>iOS项目持续集成（SVN+Cocoapods+Workspace）实战扩展（修改版）</a></li>
+<li><a href="http://www.jianshu.com/p/4ce6649973e6" target="_blank" rel="external">iOS使用Jenkins进行持续集成</a></li>
+<li><a href="http://www.jianshu.com/p/a17167274463" target="_blank" rel="external">Jenkins+GitHub+Xcode+fir搭了一个持续集成环境</a></li>
+<li><a href="http://www.jianshu.com/p/f44d746ff8a9" target="_blank" rel="external">iOS持续集成简述</a></li>
+<li><a href="http://xu01.github.io/ios/2016/04/26/iOS-automates-the-integration-1.html" target="_blank" rel="external">iOS项目自动打包(一)</a></li>
+<li><a href="http://blog.ilovejuly.com/2015/06/20/use-jeninks-to-build-daily.html" target="_blank" rel="external">使用 jenkins 进行 iOS 项目持续集成与自动化构建</a></li>
+<li><a href="http://tttpeng.com/2015/11/14/jenkins-1/" target="_blank" rel="external">使用jenkins + git + 蒲公英 对 iOS 项目进行持续集成</a></li>
+<li><a href="http://reviewcode.cn/article.html?reviewId=11" target="_blank" rel="external">iOS 下如何自动化打包 App</a></li>
+<li><a href="http://www.itiger.me/?p=30" target="_blank" rel="external">Jenkins+Github+Testflight在Mac下搭建持续集成环境</a></li>
+<li><a href="http://huos3203.github.io/MyBlog/blog/2015/09/18/xcode-and-jenkinschi-xu-ji-cheng-de-ji-chong-shi-xian-fang-shi/" target="_blank" rel="external">Xcode&amp;Jenkins持续集成的几种实现方式</a></li>
+<li><a href="http://www.linfuyan.com/continuous-integration-of-ios-application-with-jenkins-git-cocoapods-fir.im/" target="_blank" rel="external">Jenkins、Git、CocoaPods、Fir.im 实现 iOS 应用持续集成</a></li>
+<li><a href="http://www.jianshu.com/p/1fe8652918df" target="_blank" rel="external">Jenkins+Cocoapods+Coding+Git+Fir iOS项目持续集成</a></li>
+<li><a href="http://www.jianshu.com/p/e19c8327b167" target="_blank" rel="external">Jenkins/git/KeyChains &amp; Provisioning, 记录CI中的一些坑</a></li>
+<li><a href="http://www.jianshu.com/p/1fe8652918df" target="_blank" rel="external">Jenkins+Cocoapods+Coding+Git+Fir iOS项目持续集成</a></li>
+<li><a href="http://blog.csdn.net/it_talk/article/details/50261229" target="_blank" rel="external">Jenkins构建Android项目持续集成之创建项目</a>(这个虽然是安卓，但是参考了构建失败与构建成功分别发送给不同的接受者邮件的方法)</li>
+<li><a href="http://liuhongjiang.github.io/hexotech/2015/12/04/jenkins-send-email-after-build/" target="_blank" rel="external">配置jenkins发送邮件</a></li>
+<li><a href="http://www.cnblogs.com/GGHHLL/p/jenkins.html" target="_blank" rel="external">Jenkins 邮件配置 (使用 Jenkins Email Extension Plugin)</a></li>
+<li><a href="http://www.cnblogs.com/zz0412/p/jenkins_jj_01.html" target="_blank" rel="external">Jenkins进阶系列之——01使用email-ext替换Jenkins的默认邮件通知</a></li>
+<li><a href="http://docs.oclint.org/en/stable/guide/jenkins.html" target="_blank" rel="external">Using OCLint with Jenkins CI</a></li>
+</ul>
+<a id="more"></a>
+<h4 id="使用shell命令"><a href="#使用shell命令" class="headerlink" title="使用shell命令"></a>使用shell命令</h4><p>利用Xcode自带的命令xcodebuild、xcrun通过shell对iOS项目进行打包上传至第三方测试平台(fir.im、蒲公英等平台)</p>
+<h5 id="相关博文-1"><a href="#相关博文-1" class="headerlink" title="相关博文"></a>相关博文</h5><ul>
+<li><a href="https://developer.apple.com/legacy/library/documentation/Darwin/Reference/ManPages/man1/xcodebuild.1.html" target="_blank" rel="external">xcodebuild官方文档</a></li>
+<li><a href="https://developer.apple.com/legacy/library/documentation/Darwin/Reference/ManPages/man1/xcrun.1.html" target="_blank" rel="external">xcrun官方文档</a></li>
+<li><a href="http://www.runoob.com/linux/linux-shell.html" target="_blank" rel="external">Shell教程</a></li>
+<li><a href="http://www.jianshu.com/p/5abbe0d61cef" target="_blank" rel="external">shell打包到fir/蒲公英</a></li>
+</ul>
+<h3 id="Jenkins持续集成的理解"><a href="#Jenkins持续集成的理解" class="headerlink" title="Jenkins持续集成的理解"></a>Jenkins持续集成的理解</h3><p>在你的mac上搭建好Jenkins，安装好相应的插件，在项目配置中关联代码仓库(git、svn)，你可以设置固定时间点检查仓库或者固定时间循环检查仓库的方式来检查你的代码仓库，如仓库有变动，则执行编译等操作。每次编译，首先会将仓库中的代码update到本地，然后在本地编译，因此你可以使用本机的所有命令。</p>
+<p>如果你的iOS项目使用了<code>Cocoapods</code>，建议在提交代码的时候<code>ignore</code>如下:<code>Pods文件夹、</code>Podfile.lock文件<code>、</code>XXX.xcworkspace文件`。如下图：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/ignore.jpeg" alt="ignore"></p>
+<p>这样做的原因是pod来的代码，本来就是在第三方仓库，没必要再拉到自己的仓库里面占空间，这样设置之后，需要在<code>Jenkins</code>的<code>构建</code>步骤添加<code>Execute shell</code>操作，并输入脚本<code>pod install --verbose --no-repo-update</code>。如下图：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/ExecuteShell.jpeg" alt="ExecuteShell"></p>
+<h3 id="我踩过的坑"><a href="#我踩过的坑" class="headerlink" title="我踩过的坑"></a>我踩过的坑</h3><p>折腾这东西还真没少踩过坑，在这里分享一下，给入坑的同学提供一个解决的思路。</p>
+<h4 id="Keychains-and-Provisioning-Profiles-Management"><a href="#Keychains-and-Provisioning-Profiles-Management" class="headerlink" title="Keychains and Provisioning Profiles Management"></a>Keychains and Provisioning Profiles Management</h4><p>iOS打包需要签名文件和证书，所以我们借助了这个插件<code>Keychains and Provisioning Profiles Management</code>，然而你会发现，我上面提供的博文中，人家的<code>Keychains and Provisioning Profiles Management</code>插件设置中的最下方有<code>Filename</code>和<code>UUID</code>这两个选项，如下图：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/HaveFileNameAndUUID.png" alt="HaveFileNameAndUUID"></p>
+<p>而你的设置中却没有，如下图：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/NoFileNameAndUUID.jpeg" alt="NoFileNameAndUUID"></p>
+<p>这里要注意下，我们要先上传自己的<code>login.keychain</code>文件，才能在下面的<code>Keychains</code>中显示出来。但是你点击图片中最上方的<code>选择文件</code>按钮时，你会发现你要选择的<code>login.keychain</code>文件在这个路径下面(<code>/Users/Jiar/Library/Keychains</code>)，你根本无法选择到，这里一个简单的操作就是先把<code>login.keychain</code>拷贝到桌面再上传这个文件。</p>
+<p>进入Jenkins的全局设置，如下图：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/ProvisioningProfilesDirectoryPath.jpeg" alt="ProvisioningProfilesDirectoryPath"></p>
+<p>这里设置好签名文件以及证书路径后，到时候在项目中引用这个路径即可，如下图，在项目中引用这里设置的路径。（首先你要在项目的<code>构建</code>步骤里面添加<code>Xcode</code>步骤，然后在<code>Xcode</code>的<code>Code signing &amp; OS X keychain options</code>项里面勾选<code>Unlock Keychain?</code>，进行配置路径）</p>
+<p><img src="/2016/08/28/iOS项目持续集成/CodeSigning&amp;OSXKeychainOptions.jpeg" alt="CodeSigning&amp;OSXKeychainOptions"></p>
+<p>上面的步骤中，我们已经设置好了签名文件和证书的路径，也上传了<code>login.keychain</code>文件，通过这个文件可以为项目选择签名文件对应的证书。同时也在<code>Xcode</code>中设置了<code>Unlock Keychain</code>的path（path实际路径我们在系统设置中设置好了，这里只是一个引用），同时输入了unlock密码（就是你mac的登录密码）。这些做好了，还差一步，那就是我们需要告诉这个项目，选择那个签名文件，才可以通过签名文件找到对应的证书。我们在项目的<code>构建环境</code>中勾选<code>Keychains and Code Signing Identities</code>，然后执行以下操作，如下图：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/KeychainsAndCodeSigningIdentities.jpeg" alt="KeychainsAndCodeSigningIdentities"></p>
+<h4 id="上传至第三方测试平台"><a href="#上传至第三方测试平台" class="headerlink" title="上传至第三方测试平台"></a>上传至第三方测试平台</h4><p>这里的第三方测试平台主要是<a href="http://fir.im" target="_blank" rel="external">fir.im</a>、<a href="https://www.pgyer.com/" target="_blank" rel="external">蒲公英</a></p>
+<h5 id="上传至fir-im"><a href="#上传至fir-im" class="headerlink" title="上传至fir.im"></a>上传至fir.im</h5><p>首先你得先安装fir.im提供的上传工具<code>fir-cli</code>，使用如下命令安装：<code>sudo gem install fir-cli --no-ri --no-rdoc</code>。<br>你可以通过两种方式来使用这个工具上传app至fir.im。</p>
+<ul>
+<li>使用fir.im为Jenkins提供的插件。<a href="http://blog.fir.im/jenkins/" target="_blank" rel="external">教程在这里</a></li>
+<li>直接用命令来上传，命令如下：<code>fir p ${WORKSPACE}/build/TestJenkins.ipa -T #API Token#</code></li>
+</ul>
+<h5 id="上传至蒲公英"><a href="#上传至蒲公英" class="headerlink" title="上传至蒲公英"></a>上传至蒲公英</h5><p>这里提供一个蒲公英官方api，<a href="https://www.pgyer.com/doc/api#uploadApp" target="_blank" rel="external">要看点这里</a></p>
+<h4 id="邮件通知"><a href="#邮件通知" class="headerlink" title="邮件通知"></a>邮件通知</h4><p>首先要知道Jenkins自带一个邮件通知，但是无法自定义邮件内容的样子，然后都会使用一个第三方插件<code>Extended E-mail Notification</code>。</p>
+<p>首先进入到系统设置里面，找到<code>邮件通知</code>，我这里使用的是163邮箱，网易163免费邮箱相关服务器信息如下图：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/163EmailHelp.png" alt="163EmailHelp"></p>
+<p>我们会发现使用<code>SMTP</code>服务，如果启用<code>SSL</code>协议，则有<code>465</code>或<code>994</code>两个端口可以选择。如果不用这个协议，则使用<code>25</code>端口。</p>
+<p>我的设置如下图：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/邮件通知.jpeg" alt="邮件通知"></p>
+<p>注意了，这里的密码不能使用你的邮箱登录密码，原因是163邮箱第三方登录需要设置授权码，同时，我们使用<code>SMTP</code>服务，也需要去邮箱设置好先，不然会不成功。如下两张图，分别对<code>POP3/SMTP/IMAP</code>和<code>客户端授权密码</code>进行设置（没办法，为了安全，只好那么麻烦，记得把设置的授权码作为密码填入到<code>邮件通知</code>的密码栏里面去）</p>
+<p><img src="/2016/08/28/iOS项目持续集成/POP3SMTPIMAP.jpeg" alt="POP3SMTPIMAP"></p>
+<p><img src="/2016/08/28/iOS项目持续集成/客户端授权密码.jpeg" alt="客户端授权密码"></p>
+<p>这些都设置好后，不出意外没什么问题了，点击<code>邮件通知</code>下面的<code>通过发送测试邮件测试配置</code>，填入一个邮箱测试一下是否成功。</p>
+<p>如果成功了，那么恭喜你，你可以把<code>邮件通知</code>这一块丢弃了，哈哈，因为刚才说了，我们不使用<br>Jenkins自带的邮件通知服务，“那你还让我们这么配置干啥？逗我们玩？” 别急，这里主要是用了Jenkins自带的邮件通知服务进行邮箱测试，如果这里成功了，再把这些内容配置到第三方插件<code>Extended E-mail Notification</code>中，那就可以了。好了，接下来看<code>Extended E-mail Notification</code>，同样的，在Jenkins的系统设置中找到<code>Extended E-mail Notification</code>，由于<code>Extended E-mail Notification</code>内容很长，我分图片显示：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/ExtendedE-mailNotificationPart1.jpeg" alt="ExtendedE-mailNotificationPart1"></p>
+<p><img src="/2016/08/28/iOS项目持续集成/ExtendedE-mailNotificationPart2.jpeg" alt="ExtendedE-mailNotificationPart2"></p>
+<p><img src="/2016/08/28/iOS项目持续集成/ExtendedE-mailNotificationPart3.jpeg" alt="ExtendedE-mailNotificationPart3"></p>
+<p>在这个链接里面有邮件内容的说明：<a href="http://www.cnblogs.com/zz0412/p/jenkins_jj_01.html" target="_blank" rel="external">Jenkins进阶系列之——01使用email-ext替换Jenkins的默认邮件通知</a>。当然，你可以查看<code>Extended E-mail Notification</code>自带的说明，在系统设置中找到<code>Extended E-mail Notification</code>，滚动到<code>Extended E-mail Notification</code>的底部，找到<code>Content Token Reference</code>选项，点击它最右边的问号图标，即可展开内容。如下图所示：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/ContentTokenReference.jpeg" alt="ContentTokenReference"></p>
+<p>在系统设置中设置好默认值后，打开项目设置，在<code>构建后操作</code>中添加<code>Editable Email Notification</code>。配置如图所示：</p>
+<p><img src="/2016/08/28/iOS项目持续集成/EditableEmailNotificationStep1.jpeg" alt="EditableEmailNotificationStep1"></p>
+<p><img src="/2016/08/28/iOS项目持续集成/EditableEmailNotificationStep2.jpeg" alt="EditableEmailNotificationStep2"></p>
+<p><img src="/2016/08/28/iOS项目持续集成/EditableEmailNotificationStep3.jpeg" alt="EditableEmailNotificationStep3"></p>
+<p>展开 <code>Failure-Any</code></p>
+<p><img src="/2016/08/28/iOS项目持续集成/EditableEmailNotificationStep4.jpeg" alt="EditableEmailNotificationStep4"></p>
+<p>展开 <code>Success</code></p>
+<p><img src="/2016/08/28/iOS项目持续集成/EditableEmailNotificationStep5.jpeg" alt="EditableEmailNotificationStep5"></p>
+<p>到此如何在Jenkins中使用邮件服务就已经配置好了，这里再次强调一点。我们的邮件服务使用的是<code>Extended E-mail Notification</code>插件，而不是Jenkins自带的邮箱服务，也就是说，不要在<code>构建后操作</code>中添加<code>E-mail Notification</code>操作。</p>
+<h3 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h3><p>以上就是我在使用Jenkins持续集成iOS项目中的分享，感谢我在文章中提到的博文的博主的分享。读者在阅读本文时如有发现错误或不恰当指出，欢迎在评论中之处。如果读者还有一些相关方面的疑问，也欢迎在评论中提出。</p>
+<p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2016/08/28/iOS项目持续集成/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> iOS </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> iOS </tag>
+            
+            <tag> 持续集成 </tag>
+            
+            <tag> 打包 </tag>
+            
+            <tag> Jenkins </tag>
+            
+            <tag> Shell </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[UITextField光标异常]]></title>
+      <url>/2016/07/05/UITextField%E5%85%89%E6%A0%87%E5%BC%82%E5%B8%B8/</url>
+      <content type="html"><![CDATA[<h2 id="UITextField光标异常如何解决"><a href="#UITextField光标异常如何解决" class="headerlink" title="UITextField光标异常如何解决"></a>UITextField光标异常如何解决</h2><p>在<code>iOS</code>开发中，用<code>xib</code>写了那么多的界面，我也是头一次遇到这样一个问题，如下图所示：<br><img src="/2016/07/05/UITextField光标异常/UITextField光标异常.gif" alt="UITextField光标异常"></p>
+<a id="more"></a>
+<p>这是一个普通的登录界面，因为界面简单，采用xib实现，还有可能会对<code>UITextField</code>光标产生影响的是项目使用了<code>IQKeyboardManager</code>。<br>我在<code>viewDidLoad</code>加入了<code>[self.phoneField becomeFirstResponder];</code>使得输入手机号的文本框获取焦点，于是产生了上图显示的问题。</p>
+<p>解决方法：首先去掉<code>[self.phoneField becomeFirstResponder];</code>，然后用如下两种方案替换：<br>方案一：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// 刚进入该界面时，IQKeyboardManager的控件会先变黑一下，再变回来</div><div class="line">self.automaticallyAdjustsScrollViewInsets = NO;</div><div class="line">[self.phoneField becomeFirstResponder];</div></pre></td></tr></table></figure></p>
+<p>方案二：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// 如果在xib中启用了clearsOnBeginEditing属性，则该属性有一定概率失效</div><div class="line">dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;</div><div class="line">	[self.phoneField becomeFirstResponder];</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>方案三（推荐）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">self.automaticallyAdjustsScrollViewInsets = NO;</div><div class="line">dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;</div><div class="line">	[self.phoneField becomeFirstResponder];</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2016/07/05/UITextField光标异常/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> iOS </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> iOS </tag>
+            
+            <tag> UITextField </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Android BaiduMap MyLocationConfiguration Set Color]]></title>
+      <url>/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/</url>
+      <content type="html"><![CDATA[<p>如何正确设置 MyLocationConfiguration 的 accuracyCircleStrokeColor 与 accuracyCircleFillColor 属性的颜色值</p>
+<p>Android开发中，经常用到地图定位服务，百度地图api正提供了这样的服务，然而客户需求的效果和api自带的样式不尽相同，那么就需要我们就行一些定制化操作了。</p>
+<a id="more"></a>
+<p>如下图，百度地图api默认提供了蓝色的外边框（accuracyCircleStrokeColor），淡蓝色的内部填充（accuracyCircleFillColor）<br><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0001.png" alt="百度地图api MyLocationConfiguration 默认样式"></p>
+<p>因为客户的需求是修改填充部分颜色，接下来我们通过代码来修改内部填充色：</p>
+<p>设置填充色为红色</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">MyLocationConfiguration confit = new MyLocationConfiguration(LocationMode.FOLLOWING, true, mCurrentMarker);</div><div class="line">// 红色</div><div class="line">confit.accuracyCircleFillColor = 0xFF0000FF;</div><div class="line">mBaiduMap.setMyLocationConfigeration(confit);</div></pre></td></tr></table></figure>
+<p>设置后，运行效果如下：<br><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0002.png" alt="内部红色填充色"></p>
+<p>设置填充色为蓝色</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">MyLocationConfiguration confit = new MyLocationConfiguration(LocationMode.COMPASS, true, mCurrentMarker);</div><div class="line">// 蓝色</div><div class="line">confit.accuracyCircleFillColor = 0xFFFF0000;</div><div class="line">mBaiduMap.setMyLocationConfigeration(confit);</div></pre></td></tr></table></figure>
+<p>设置后，运行效果如下：<br><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0003.png" alt="内部蓝色填充色"></p>
+<p>设置填充色为绿色</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">MyLocationConfiguration confit = new MyLocationConfiguration(LocationMode.COMPASS, true, mCurrentMarker);</div><div class="line">// 绿色</div><div class="line">confit.accuracyCircleFillColor = 0xFF00FF00;</div><div class="line">mBaiduMap.setMyLocationConfigeration(confit);</div></pre></td></tr></table></figure>
+<p>设置后，运行效果如下：<br><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0004.png" alt="内部绿色填充色"></p>
+<p>到此，颜色修改成功！accuracyCircleStrokeColor与accuracyCircleFillColor的设置方式一样。<br>可是问题来了，小伙伴们会说，这个颜色的值要怎么设置呢。这个“0xFF0000FF”，“0xFFFF0000”，“0xFF00FF00”都是怎么来的呢？接下来就来回答这个问题。<br>我们首先会想到的解决方式是去点进 MyLocationConfiguration 的类里面去查看有没有相关方法或是提示。<br>在 MyLocationConfiguration 中我们发现了 accuracyCircleFillColor 和 accuracyCircleStrokeColor 被设置了默认值（其实我们会发现这两个分别是构造默认的蓝色边框和淡蓝色填充需要用到的值）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public int accuracyCircleFillColor = 4521984;</div><div class="line">public int accuracyCircleStrokeColor = 4653056;</div></pre></td></tr></table></figure></p>
+<p>还有一个比较重要的<code>a</code>方法（真想吐槽这个方法名）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">private int a(int var1) &#123;</div><div class="line">	int var2 = (var1 &amp; -16777216) &gt;&gt; 24;</div><div class="line">	int var3 = (var1 &amp; 16711680) &gt;&gt; 16;</div><div class="line">	int var4 = (var1 &amp; &apos;\uff00&apos;) &gt;&gt; 8;</div><div class="line">	int var5 = var1 &amp; 255;</div><div class="line">	int var6 = Color.argb(var2, var5, var4, var3);</div><div class="line">	return var6;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在 MyLocationConfiguration 其中的两个个构造方法中，我们会发现api都调用了<code>a</code>方法给accuracyCircleFillColor和accuracyCircleStrokeColor重新设值（下面给出了其中一个构造的代码）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public MyLocationConfiguration(MyLocationConfiguration.LocationMode var1, boolean var2, BitmapDescriptor var3) &#123;</div><div class="line">	if(var1 == null) &#123;</div><div class="line">		var1 = MyLocationConfiguration.LocationMode.NORMAL;</div><div class="line">	&#125;</div><div class="line">	this.locationMode = var1;</div><div class="line">	this.enableDirection = var2;</div><div class="line">	this.customMarker = var3;</div><div class="line">	this.accuracyCircleFillColor = this.a(this.accuracyCircleFillColor);</div><div class="line">	this.accuracyCircleStrokeColor = this.a(this.accuracyCircleStrokeColor);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>不难发现，<code>a</code>方法在构造颜色中起了很重要的作用，算法好的同学们，可能很容易推测验证出<code>a</code>方法的作用。我在这里也不深究<code>a</code>方法如何构造出需要的颜色。下面我通过一张说明图来解释如果构造自己需要的颜色。<br><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-result.png" alt="颜色构造说明"></p>
+<p>Now, all is OK…</p>
+<p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> Android </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Android </tag>
+            
+            <tag> BaiduMap </tag>
+            
+            <tag> MyLocationConfiguration </tag>
+            
+            <tag> accuracyCircleStrokeColor </tag>
+            
+            <tag> accuracyCircleFillColor </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[UITableview分割线]]></title>
+      <url>/2016/06/02/UITableview%E5%88%86%E5%89%B2%E7%BA%BF/</url>
+      <content type="html"><![CDATA[<ol>
+<li><p>cell分割线补全</p>
+<ul>
+<li><p>指定cell分割线补全：<br>在<code>cellForRowAtIndexPath</code>代理中加入如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cell.preservesSuperviewLayoutMargins = NO;</div><div class="line">cell.layoutMargins = UIEdgeInsetsZero;</div><div class="line">cell.separatorInset = UIEdgeInsetsZero;</div></pre></td></tr></table></figure>
+<a id="more"></a></li>
+<li>全局cell分割线补全：<br>在<code>UIControllerView</code>中加入重写如下方法：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">- (void)viewDidLayoutSubviews &#123;</div><div class="line">    if ([self.table respondsToSelector:@selector(setSeparatorInset:)]) &#123;</div><div class="line">        [self.table setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];</div><div class="line">    &#125;</div><div class="line">    if ([self.table respondsToSelector:@selector(setLayoutMargins:)]) &#123;</div><div class="line">        [self.table setLayoutMargins:UIEdgeInsetsMake(0,0,0,0)];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath &#123;</div><div class="line">    if ([cell respondsToSelector:@selector(setSeparatorInset:)]) &#123;</div><div class="line">        [cell setSeparatorInset:UIEdgeInsetsZero];</div><div class="line">    &#125;</div><div class="line">    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) &#123;</div><div class="line">        [cell setLayoutMargins:UIEdgeInsetsZero];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>cell分割线隐藏</p>
+<ul>
+<li><p>指定cell分割线隐藏：<br>首先保证指定<code>cell分割线已经补全</code>，然后加入如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cell.separatorInset = UIEdgeInsetsMake(0, 0, 0, kDeviceWidth);</div></pre></td></tr></table></figure>
+</li>
+<li><p>全局cell分割先隐藏：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">self.table.separatorStyle = UITableViewCellSeparatorStyleNone;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+<p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2016/06/02/UITableview分割线/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> iOS </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> iOS </tag>
+            
+            <tag> cell </tag>
+            
+            <tag> UITableview </tag>
+            
+            <tag> UITableview分割线 </tag>
+            
+            <tag> UITableview分割线补全 </tag>
+            
+            <tag> UITableview分割线隐藏 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[从此不再担心键盘遮住输入框OC2]]></title>
+      <url>/2015/12/07/%E4%BB%8E%E6%AD%A4%E4%B8%8D%E5%86%8D%E6%8B%85%E5%BF%83%E9%94%AE%E7%9B%98%E9%81%AE%E4%BD%8F%E8%BE%93%E5%85%A5%E6%A1%86OC2/</url>
+      <content type="html"><![CDATA[<p>文章可能有更新，如需了解，请查看原文：<a href="http://www.jianshu.com/p/f33fd3f927f6" target="_blank" rel="external">从此不再担心键盘遮住输入框OC(二)</a></p>
+<hr>
+<p>在我发布这篇文章没多久之前，我发布了一篇叫 <a href="http://blog.jiar.vip/2015/11/15/%E4%BB%8E%E6%AD%A4%E4%B8%8D%E5%86%8D%E6%8B%85%E5%BF%83%E9%94%AE%E7%9B%98%E9%81%AE%E4%BD%8F%E8%BE%93%E5%85%A5%E6%A1%86OC1/">从此不再担心键盘遮住输入框OC(一)</a>的文章。我在那篇文章中介绍了我的键盘组件<a href="https://github.com/Jiar/KeyboardToolBar/" target="_blank" rel="external">KeyboardToolBar</a>。</p>
+<p>新版效果图<br><img src="https://github.com/Jiar/KeyboardToolBar/raw/master/images/KeyboardToolBar2.gif" alt="KeyboardToolBar2 show"> </p>
+<a id="more"></a>
+<blockquote>
+<p>当时的<a href="https://github.com/Jiar/KeyboardToolBar/" target="_blank" rel="external">KeyboardToolBar</a>还只是支持<code>UITextField</code>。后来也有收到别人的建议，希望增加支持<code>UITextField</code>之类的。其实本人也早就想着再完善一下。正好这个周末不忙，我就稍微优化了下。发布了V2版本。</p>
+<p>现在的<a href="https://github.com/Jiar/KeyboardToolBar/" target="_blank" rel="external">KeyboardToolBar</a>支持<code>UITextField</code>、<code>UITextView</code>和<code>UISearchBar</code>。并且支持运行时(<code>runtime</code>)，你只要在项目中导入<code>&quot;KeyboardToolBar.h&quot;</code>即可开始使用，无需额外代码。</p>
+</blockquote>
+<h3 id="KeyboardToolBar-是什么"><a href="#KeyboardToolBar-是什么" class="headerlink" title="KeyboardToolBar 是什么"></a>KeyboardToolBar 是什么</h3><p>KeyboardToolBar的主旨：从此不再担心键盘遮住输入框。目前是V2版本，如果想了解V1版本，请移步<a href="http://www.jianshu.com/p/48993ff982c1" target="_blank" rel="external">V1版本</a>。</p>
+<h3 id="如何开始使用"><a href="#如何开始使用" class="headerlink" title="如何开始使用"></a>如何开始使用</h3><ul>
+<li><strong>下载<a href="https://github.com/Jiar/KeyboardToolBar/" target="_blank" rel="external">KeyboardToolBar</a>并尝试在你的iPhone上运行DEMO。</strong></li>
+</ul>
+<h3 id="使用CocoaPods安装"><a href="#使用CocoaPods安装" class="headerlink" title="使用CocoaPods安装"></a>使用CocoaPods安装</h3><h4 id="Podfile"><a href="#Podfile" class="headerlink" title="Podfile"></a>Podfile</h4><pre><code>platform :ios, &apos;7.0&apos; 
+pod &quot;KeyboardToolBar&quot;
+</code></pre><h3 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h3><p>现在，<a href="https://github.com/Jiar/KeyboardToolBar/" target="_blank" rel="external">KeyboardToolBar</a>支持<code>UITextField</code>、<code>UITextView</code>和<code>UISearchBar</code>。并且支持运行时(<code>runtime</code>)，你只要在项目中导入<code>&quot;KeyboardToolBar.h&quot;</code>即默认为所有的<code>UITextField</code>、<code>UITextView</code>和<code>UISearchBar</code>自动注册使用了<code>KeyboardToolBar</code>，你无需使用额外的代码来开启。如果你不想用<code>KeyboardToolBar</code>，你可以使用相应的<code>unregisterKeyboardToolBar</code>方法来反注册即可移除<code>KeyboardToolBar</code>。如果你已经为某个控件移除了<code>KeyboardToolBar</code>，又想要继续使用，你可以使用相应的<code>registerKeyboardToolBar</code>方法为控件重新注册使用<code>KeyboardToolBar</code>。</p>
+<h4 id="import"><a href="#import" class="headerlink" title="import"></a>import</h4><pre><code>/// 导入就是使用 
+/// 导入后，将自动为UITextField、UITextView和UISearchBar注册使用KeyboardToolBar 
+#import &quot;KeyboardToolBar.h&quot;
+</code></pre><h4 id="注册使用KeyboardToolBar"><a href="#注册使用KeyboardToolBar" class="headerlink" title="注册使用KeyboardToolBar"></a>注册使用KeyboardToolBar</h4><pre><code>/// 以下均为可选方法，你可以不使用。 
+/// 为UITextField注册使用KeyboardToolBar. 
+[KeyboardToolBar registerKeyboardToolBarWithTextField:self.textField]; 
+/// 为UITextView注册使用KeyboardToolBar. 
+[KeyboardToolBar registerKeyboardToolBarWithTextView:self.textView]; 
+/// 为UISearchBar注册使用KeyboardToolBar.
+[KeyboardToolBar registerKeyboardToolBarWithSearchBar:self.searchBar];
+</code></pre><h4 id="反注册取消KeyboardToolBar"><a href="#反注册取消KeyboardToolBar" class="headerlink" title="反注册取消KeyboardToolBar"></a>反注册取消KeyboardToolBar</h4><pre><code>/// 以下均为可选方法，你可以不使用。 
+/// 你可以为目标UITextField反注册取消使用KeyboardToolBar.
+[KeyboardToolBar unregisterKeyboardToolBarWithTextField:self.textField]; 
+/// 你可以为目标UITextView反注册取消使用KeyboardToolBar 
+[KeyboardToolBar unregisterKeyboardToolBarWithTextView:self.textView]; 
+/// 你可以为目标UISearchBar反注册取消使用KeyboardToolBar.
+[KeyboardToolBar unregisterKeyboardToolBarWithSearchBar:self.searchBar]; 
+</code></pre><h3 id="License"><a href="#License" class="headerlink" title="License"></a>License</h3><p>KeyboardToolBar is released under the MIT license.</p>
+<h3 id="微信订阅号"><a href="#微信订阅号" class="headerlink" title="微信订阅号"></a>微信订阅号</h3><p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2015/12/07/从此不再担心键盘遮住输入框OC2/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> iOS </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> iOS </tag>
+            
+            <tag> 键盘 </tag>
+            
+            <tag> 输入框 </tag>
+            
+            <tag> 遮盖 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[从此不再担心键盘遮住输入框OC1]]></title>
+      <url>/2015/11/15/%E4%BB%8E%E6%AD%A4%E4%B8%8D%E5%86%8D%E6%8B%85%E5%BF%83%E9%94%AE%E7%9B%98%E9%81%AE%E4%BD%8F%E8%BE%93%E5%85%A5%E6%A1%86OC1/</url>
+      <content type="html"><![CDATA[<p>文章可能有更新，如需了解，请查看原文：<a href="http://www.jianshu.com/p/48993ff982c1" target="_blank" rel="external">从此不再担心键盘遮住输入框OC(一)</a></p>
+<hr>
+<h3 id="新版本在这里：从此不再担心键盘遮住输入框OC-二"><a href="#新版本在这里：从此不再担心键盘遮住输入框OC-二" class="headerlink" title="新版本在这里：从此不再担心键盘遮住输入框OC(二)"></a>新版本在这里：<a href="http://blog.jiar.vip/2015/12/07/%E4%BB%8E%E6%AD%A4%E4%B8%8D%E5%86%8D%E6%8B%85%E5%BF%83%E9%94%AE%E7%9B%98%E9%81%AE%E4%BD%8F%E8%BE%93%E5%85%A5%E6%A1%86OC2/">从此不再担心键盘遮住输入框OC(二)</a></h3><hr>
+<p>想必大家在iOS开发中都有遇到过这种问题。点击输入框后，弹出的键盘遮挡了输入框，然后你就无法看见你输入了什么。为了解决这个问题，我也在 <a href="https://github.com/" target="_blank" rel="external">Github</a>、<a href="http://www.cocoachina.com/" target="_blank" rel="external">CocoaChina</a>以及<a href="http://code4app.com/" target="_blank" rel="external">Code4App</a>上花了不少时间去找相关的代码以及实现。</p>
+<h5 id="找到的相关内容很多，但是都有一个共同点，是通过将底部的View上滑至键盘之上，从而可以看见输入框内的内容。在这方面做得好的有IQKeyboardManager，喜欢的可以去看看，但是我不是就直接采用了IQKeyboardManager，而是自己写了一个键盘组件KeyboardToolBar，优点是小巧易使用，支持CocoaPods，侵入性小，作者爱交友"><a href="#找到的相关内容很多，但是都有一个共同点，是通过将底部的View上滑至键盘之上，从而可以看见输入框内的内容。在这方面做得好的有IQKeyboardManager，喜欢的可以去看看，但是我不是就直接采用了IQKeyboardManager，而是自己写了一个键盘组件KeyboardToolBar，优点是小巧易使用，支持CocoaPods，侵入性小，作者爱交友" class="headerlink" title="找到的相关内容很多，但是都有一个共同点，是通过将底部的View上滑至键盘之上，从而可以看见输入框内的内容。在这方面做得好的有IQKeyboardManager，喜欢的可以去看看，但是我不是就直接采用了IQKeyboardManager，而是自己写了一个键盘组件KeyboardToolBar，优点是小巧易使用，支持CocoaPods，侵入性小，作者爱交友~"></a>找到的相关内容很多，但是都有一个共同点，是通过将底部的View上滑至键盘之上，从而可以看见输入框内的内容。在这方面做得好的有<a href="https://github.com/hackiftekhar/IQKeyboardManager" target="_blank" rel="external">IQKeyboardManager</a>，喜欢的可以去看看，但是我不是就直接采用了IQKeyboardManager，而是自己写了一个键盘组件<a href="https://github.com/Jiar/KeyboardToolBar/" target="_blank" rel="external">KeyboardToolBar</a>，优点是小巧易使用，支持<a href="https://cocoapods.org/" target="_blank" rel="external">CocoaPods</a>，侵入性小，作者爱交友~</h5><p>先来一张效果图<br><img src="https://github.com/Jiar/KeyboardToolBar/raw/master/images/KeyboardToolBar1.gif" alt="KeyboardToolBar1 show"> </p>
+<a id="more"></a>
+<h3 id="如何使用、源码分析"><a href="#如何使用、源码分析" class="headerlink" title="如何使用、源码分析"></a>如何使用、源码分析</h3><p>下面我通过<code>如何使用</code>和<code>源码分析</code>两个方面来介绍<a href="https://github.com/Jiar/KeyboardToolBar/" target="_blank" rel="external">KeyboardToolBar</a>。</p>
+<h4 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h4><hr>
+<h5 id="就是不想用CocoaPods"><a href="#就是不想用CocoaPods" class="headerlink" title="就是不想用CocoaPods"></a>就是不想用<a href="https://cocoapods.org/" target="_blank" rel="external">CocoaPods</a></h5><ul>
+<li>去<a href="https://github.com/Jiar/KeyboardToolBar/" target="_blank" rel="external">KeyboardToolBar</a>下载zip。将<code>Classes</code>文件夹下的代码复制到你的项目中去。</li>
+</ul>
+<h5 id="如果你也用CocoaPods"><a href="#如果你也用CocoaPods" class="headerlink" title="如果你也用CocoaPods"></a>如果你也用<a href="https://cocoapods.org/" target="_blank" rel="external">CocoaPods</a></h5><h6 id="Podfile"><a href="#Podfile" class="headerlink" title="Podfile"></a>Podfile</h6><pre><code>platform :ios, &apos;7.0&apos;
+pod &apos;KeyboardToolBar&apos;, &apos;~&gt; 1.0.0&apos;
+</code></pre><h6 id="import"><a href="#import" class="headerlink" title="import"></a>import</h6><pre><code>/// 不要忘了先导入.h 
+#import &quot;KeyboardToolBar.h&quot;
+</code></pre><h6 id="注册使用KeyboardToolBar"><a href="#注册使用KeyboardToolBar" class="headerlink" title="注册使用KeyboardToolBar"></a>注册使用KeyboardToolBar</h6><pre><code>/// 使用该方法给UITextField注册使用KeyboardToolBar 
+/// @param textField 需要注册的UITextField 
+[KeyboardToolBar registerKeyboardToolBar:self.textField];
+</code></pre><h6 id="反注册-移除-eyboardToolBar"><a href="#反注册-移除-eyboardToolBar" class="headerlink" title="反注册(移除)eyboardToolBar"></a>反注册(移除)eyboardToolBar</h6><pre><code>/// 不想让UITextField使用KeyboardToolBar的时候 
+/// 强烈建议使用该方法给UITextField移除KeyboardToolBar 
+/// @param textField 需要移除的UITextField
+[KeyboardToolBar unregisterKeyboardToolBar:self.textField];
+</code></pre><h6 id="unregisterAllKeyboardToolBar"><a href="#unregisterAllKeyboardToolBar" class="headerlink" title="unregisterAllKeyboardToolBar"></a>unregisterAllKeyboardToolBar</h6><pre><code>/// 如果嫌一个一个给UITextField移除KeyboardToolBar麻烦 
+/// 使用这个方法一次性将所有的UITextField移除KeyboardToolBar
+[KeyboardToolBar unregisterAllKeyboardToolBar];
+</code></pre><h4 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h4><hr>
+<h5 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h5><p>我的设想是在键盘上方的工具栏处做文章，哪怕是键盘挡住了输入框，但是如果将输入框上的<code>placeholder</code>以及输入的内容时刻在工具栏上显示，那么哪怕键盘挡住了输入框，依旧可以清楚知道我现在要输入哪方面的内容以及我现在输入的内容是什么。</p>
+<h5 id="源码分析-1"><a href="#源码分析-1" class="headerlink" title="源码分析"></a>源码分析</h5><p>为了看起来清楚些，以下代码中我使用<code>KTB</code>代表<code>KeyboardToolBar单例对象</code>。</p>
+<h6 id="h文件"><a href="#h文件" class="headerlink" title=".h文件"></a>.h文件</h6><pre><code>/// 继承iOS自带的UIToolbar
+@interface KeyboardToolBar : UIToolbar
+</code></pre><h6 id="宏"><a href="#宏" class="headerlink" title="宏"></a>宏</h6><pre><code>/// KeyboardToolBar宽度 
+#define KeyboardToolBarWidth [UIScreen mainScreen].bounds.size.width 
+/// KeyboardToolBar高度 
+#define KeyboardToolBarHeight 44 
+/// KeyboardToolBar上UIScrollView组件的宽度 
+#define KeyboardScrollViewWidth (KeyboardToolBarWidth-80)
+</code></pre><h6 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h6><pre><code>@property(nonatomic, strong)UIScrollView *scrollView;
+@property(nonatomic, strong)UITextField *toolBarTextField; 
+/// 字典用于存放注册使用KeyboardToolBar的所有UITextField
+@property(nonatomic, retain)NSMutableDictionary *allRegisterTextFields;
+</code></pre><h6 id="KeyboardToolBar构造单例方法"><a href="#KeyboardToolBar构造单例方法" class="headerlink" title="KeyboardToolBar构造单例方法"></a>KeyboardToolBar构造单例方法</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">/// KTBstatic KeyboardToolBar *keyboardToolBar = nil;</div><div class="line">+ (instancetype)shareKeyboardToolBar &#123;</div><div class="line">    if (keyboardToolBar == nil) &#123; </div><div class="line">        /// KTB是否初始化，如果没有，则进行初始化 </div><div class="line">        /// KeyboardToolBar上需要有一个UIScrollView组件，UIScrollView内部有一个UITextField，如果UITextField内的内容过多，UIScrollView就派上用场了。</div><div class="line">        /// KeyboardToolBar的右侧还需要有一个&apos;完成&apos;按钮，点击该按钮后关闭键盘</div><div class="line">        keyboardToolBar = [[KeyboardToolBar alloc]initWithFrame:CGRectMake(0, 0, KeyboardToolBarWidth, KeyboardToolBarHeight)];</div><div class="line">        [keyboardToolBar setBarStyle:UIBarStyleDefault];</div><div class="line">        keyboardToolBar.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, KeyboardScrollViewWidth, KeyboardToolBarHeight)];</div><div class="line">        keyboardToolBar.scrollView.backgroundColor = [UIColor clearColor]; </div><div class="line">        keyboardToolBar.scrollView.contentSize = CGSizeMake(KeyboardScrollViewWidth, KeyboardToolBarHeight); </div><div class="line">        keyboardToolBar.scrollView.bounces = NO;</div><div class="line">        keyboardToolBar.toolBarTextField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, KeyboardScrollViewWidth, KeyboardToolBarHeight)];</div><div class="line">        keyboardToolBar.toolBarTextField.textAlignment = NSTextAlignmentLeft;</div><div class="line">        keyboardToolBar.toolBarTextField.userInteractionEnabled = NO；</div><div class="line">        [keyboardToolBar.scrollView addSubview:keyboardToolBar.toolBarTextField];</div><div class="line">        UIBarButtonItem *textFieldItem = [[UIBarButtonItem alloc] initWithCustomView:keyboardToolBar.scrollView];</div><div class="line">        UIBarButtonItem *finishBtnItem = [[UIBarButtonItem alloc]initWithTitle:@&quot;完成&quot; style:UIBarButtonItemStyleDone target:keyboardToolBar action:@selector(resignKeyboard)];</div><div class="line">        NSArray * buttonsArray = [NSArray arrayWithObjects:textFieldItem,finishBtnItem,nil]; [keyboardToolBar setItems:buttonsArray];</div><div class="line">    &#125; </div><div class="line">    return keyboardToolBar;</div><div class="line">&#125;</div><div class="line">/// 关闭键盘</div><div class="line">- (void)resignKeyboard &#123;</div><div class="line">    keyboardToolBar.toolBarTextField.text = @&quot;&quot;;</div><div class="line">    [[[UIApplication sharedApplication] keyWindow] endEditing:YES];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h6 id="KeyboardToolBar注册方法"><a href="#KeyboardToolBar注册方法" class="headerlink" title="KeyboardToolBar注册方法"></a>KeyboardToolBar注册方法</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">+ (void)registerKeyboardToolBar:(UITextField *)textField &#123;</div><div class="line">    if([KeyboardToolBar shareKeyboardToolBar].allRegisterTextFields == nil) &#123;</div><div class="line">        keyboardToolBar.allRegisterTextFields = [NSMutableDictionary dictionaryWithCapacity:10];</div><div class="line">    &#125;</div><div class="line">    /// 将KTB赋予传入的textField</div><div class="line">    [textField setInputAccessoryView:keyboardToolBar];</div><div class="line">    /// 为传入的textField对象addTarget</div><div class="line">    [textField addTarget:keyboardToolBar action:@selector(textFieldDidBegin:) forControlEvents:UIControlEventEditingDidBegin];</div><div class="line">    [textField addTarget:keyboardToolBar action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];</div><div class="line">    /// 将传入的textField保存于KTB</div><div class="line">    [keyboardToolBar.allRegisterTextFields setValue:textField forKey:[NSString stringWithFormat:@&quot;%p&quot;,textField]];</div><div class="line">&#125;</div><div class="line">- (void)textFieldDidBegin:(UITextField *)textField &#123;</div><div class="line">    [self reSetTextField:textField];</div><div class="line">&#125;</div><div class="line">- (void)textFieldDidChange:(UITextField *)textField &#123;</div><div class="line">    [self reSetTextField:textField];</div><div class="line">&#125;</div><div class="line">/// 将textField的placeholder以及textField上的文字及时显示在KTB内部的UITextField上</div><div class="line">- (void)reSetTextField:(UITextField *)textField &#123;</div><div class="line">    UITextField *tempTextField = [keyboardToolBar.allRegisterTextFields objectForKey:[NSString stringWithFormat:@&quot;%p&quot;,textField]];</div><div class="line">    CGFloat textWidth = [KeyboardToolBar widthForString:tempTextField.text withFont:keyboardToolBar.toolBarTextField.font];</div><div class="line">    if(textWidth &gt; KeyboardScrollViewWidth) &#123;</div><div class="line">        keyboardToolBar.toolBarTextField.frame = CGRectMake(0,0,textWidth,KeyboardToolBarHeight);</div><div class="line">        keyboardToolBar.scrollView.contentSize = CGSizeMake(textWidth, KeyboardToolBarHeight);</div><div class="line">        [self.scrollView scrollRectToVisible:CGRectMake(textWidth-KeyboardScrollViewWidth,0,KeyboardScrollViewWidth,KeyboardToolBarHeight) animated:YES];</div><div class="line">    &#125; else &#123;</div><div class="line">        keyboardToolBar.toolBarTextField.frame = CGRectMake(0, 0, KeyboardScrollViewWidth, KeyboardToolBarHeight);</div><div class="line">        keyboardToolBar.scrollView.contentSize = CGSizeMake(KeyboardScrollViewWidth, KeyboardToolBarHeight);</div><div class="line">    &#125;</div><div class="line">    keyboardToolBar.toolBarTextField.text = tempTextField.text;</div><div class="line">    keyboardToolBar.toolBarTextField.textColor = tempTextField.textColor;</div><div class="line">    if(tempTextField.placeholder != nil) &#123;</div><div class="line">        NSAttributedString *attribute = textField.attributedPlaceholder;</div><div class="line">        NSDictionary *dictionary = [attribute attributesAtIndex:0 effectiveRange:nil];</div><div class="line">        keyboardToolBar.toolBarTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:tempTextField.placeholder attributes:@&#123;NSForegroundColorAttributeName: [dictionary valueForKey:NSForegroundColorAttributeName]&#125;];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">/// 根据文本内容和字体计算NSString长度用于设置KTB内部的UIScrollView以及UITextField的宽度</div><div class="line">+ (CGFloat)widthForString:(NSString *)str withFont:(UIFont *)font &#123;</div><div class="line">    NSDictionary *attribute = @&#123;NSFontAttributeName: font&#125;;</div><div class="line">    CGSize size = [str boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;</div><div class="line">    return size.width;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h6 id="KeyboardToolBar反注册-移除-方法"><a href="#KeyboardToolBar反注册-移除-方法" class="headerlink" title="KeyboardToolBar反注册(移除)方法"></a>KeyboardToolBar反注册(移除)方法</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">/// 直接将KTB中所有已注册的UITextField移除</div><div class="line">+ (void)unregisterKeyboardToolBar:(UITextField *)textField &#123;</div><div class="line">    if(keyboardToolBar == nil || keyboardToolBar.allRegisterTextFields.count == 0) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    UITextField *tempTextField = [keyboardToolBar.allRegisterTextFields objectForKey:[NSString stringWithFormat:@&quot;%p&quot;,textField]];</div><div class="line">    [tempTextField setInputAccessoryView:nil];</div><div class="line">    [tempTextField removeTarget:keyboardToolBar action:@selector(textFieldDidBegin:) forControlEvents:UIControlEventEditingDidBegin];</div><div class="line">    [tempTextField removeTarget:keyboardToolBar action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];</div><div class="line">    [keyboardToolBar.allRegisterTextFields removeObjectForKey:[NSString stringWithFormat:@&quot;%p&quot;,textField]];</div><div class="line">    if(keyboardToolBar.allRegisterTextFields.count == 0) &#123;</div><div class="line">        keyboardToolBar.allRegisterTextFields = nil;</div><div class="line">        keyboardToolBar = nil;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">/// 根据传入的UITextField兑现。从KTB内移除</div><div class="line">+ (void)unregisterAllKeyboardToolBar &#123;</div><div class="line">    if(keyboardToolBar == nil || keyboardToolBar.allRegisterTextFields.count == 0) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    NSEnumerator *enumeratorValue = [keyboardToolBar.allRegisterTextFields objectEnumerator];</div><div class="line">    for(UITextField *tempTextField in enumeratorValue) &#123;</div><div class="line">        [tempTextField setInputAccessoryView:nil];</div><div class="line">        [tempTextField removeTarget:keyboardToolBar action:@selector(textFieldDidBegin:) forControlEvents:UIControlEventEditingDidBegin];</div><div class="line">        [tempTextField removeTarget:keyboardToolBar action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];</div><div class="line">    &#125; </div><div class="line">    [keyboardToolBar.allRegisterTextFields removeAllObjects];</div><div class="line">    keyboardToolBar.allRegisterTextFields = nil;</div><div class="line">    keyboardToolBar = nil;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>好了，以上就是我的介绍，欢迎大家来我的<a href="https://github.com/Jiar/KeyboardToolBar/" target="_blank" rel="external">KeyboardToolBar</a>主页进行Star、Issues或Pull requests，我是Jiar，我热爱交朋友~</p>
+<h3 id="微信订阅号"><a href="#微信订阅号" class="headerlink" title="微信订阅号"></a>微信订阅号</h3><p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2015/11/15/从此不再担心键盘遮住输入框OC1/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> iOS </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> iOS </tag>
+            
+            <tag> 键盘 </tag>
+            
+            <tag> 输入框 </tag>
+            
+            <tag> 遮盖 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[About Blog About Me]]></title>
+      <url>/2015/11/11/About-Blog-About-Me/</url>
+      <content type="html"><![CDATA[<ul>
+<li><p>关于博客</p>
+<ul>
+<li><p>博客由来：</p>
+<p>  一方面为了记录一些技术相关内容，写作的同时可以巩固知识，同时可以提升写作水平。另一方面又可以发扬知识分享精神，给大家分享一些博主的所学所得。利人利己，何乐不为。</p>
+</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+<pre><code>- 博客方向：
+
+    Jiar&apos;s Blog 是计算机编程技术博客，于2015年11月11日（这是一个比较有意思的节日）正式上线。博客包括的主要方向：移动软件开发，网站开发，后台开发，前端开发，微信建站，手机游戏开发...包括的主要编程语言有：Objective-C，Swift，Java，js...分类无上限，适博主心情而定。
+</code></pre><ul>
+<li><p>关于我</p>
+<ul>
+<li><p>学习经历：</p>
+<p>  大一玩得比较多，勉勉强强自学了C和Java。写了“C版链表式学生管理系统”，“Java版多人聊天室”等小成品。</p>
+<p>  大二进了一个工作室，从此一发不可收拾…自学了javaweb、sql、html、css、js、SSH、Android、iOS…大二学得比较宽泛，也没那么精细，但还是写了些小玩意：“基于javaweb的网页版学生信息管理系统”，“基于SSH框架的眼镜在线直销，“Android app Dr.Car行车伴侣”…同时也和工作室的小伙伴们拿了五六个计算机技术类奖，下至省级三等奖，上到国家一等奖。</p>
+<p>  大三的生活主要以在学长开的公司接外包项目锻炼技术为主，目前已经有了5个项目经历，除了第一个项目是负责Android端独立开发，剩下的四个项目中皆是负责iOS端独立开发…</p>
+<p>  大四…待定…</p>
+</li>
+<li><p>自定义：</p>
+<p>  喜欢编程，尤其是一些新奇的编程技术，爱好极客产品。喜欢逛Github、V2EX、知乎、简书等社区论坛。喜欢旅行，唱歌，爬山，游泳。</p>
+<p>  爱编程，爱交友，爱玩。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2015/11/11/About-Blog-About-Me/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> Life </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Jiar </tag>
+            
+            <tag> Blog </tag>
+            
+            <tag> Jiar&#39;s Blog </tag>
+            
+            <tag> iOS </tag>
+            
+            <tag> Android </tag>
+            
+            <tag> 开发者 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+  
+  
+</search>

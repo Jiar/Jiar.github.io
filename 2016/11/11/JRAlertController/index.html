@@ -1,0 +1,1091 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS,Swift,JRAlertController,UIAlertController,alert,sheet," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="JRAlertControllerJRAlertControllerJRAlertController：基于apple的UIAlertController控件api，用swift重新打造的UI控件，更符合主流app的风格。 JRAlertController总体效果图">
+<meta name="keywords" content="iOS,Swift,JRAlertController,UIAlertController,alert,sheet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JRAlertController">
+<meta property="og:url" content="https://blog.jiar.vip/2016/11/11/JRAlertController/index.html">
+<meta property="og:site_name" content="Jiar&#39;s Blog">
+<meta property="og:description" content="JRAlertControllerJRAlertControllerJRAlertController：基于apple的UIAlertController控件api，用swift重新打造的UI控件，更符合主流app的风格。 JRAlertController总体效果图">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_Main.gif">
+<meta property="og:image" content="https://blog.jiar.vip/2016/11/11/JRAlertController/weibo.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_alert_simple.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_alert_multiple.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_sheet_simple.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_sheet_multiple.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_alert_simple.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_alert_multiple.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_sheet_simple.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_sheet_multiple.gif">
+<meta property="og:image" content="https://blog.jiar.vip/2016/11/11/JRAlertController/Dingyuehao.jpg">
+<meta property="og:updated_time" content="2017-10-21T09:46:17.262Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JRAlertController">
+<meta name="twitter:description" content="JRAlertControllerJRAlertControllerJRAlertController：基于apple的UIAlertController控件api，用swift重新打造的UI控件，更符合主流app的风格。 JRAlertController总体效果图">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_Main.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://blog.jiar.vip/2016/11/11/JRAlertController/"/>
+
+
+
+
+
+  <title> JRAlertController | Jiar's Blog </title>
+  <script type="text/javascript">
+    var host = "blog.jiar.vip";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+      window.location.protocol = "https";
+  </script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-78118193-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jiar's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://blog.jiar.vip/2016/11/11/JRAlertController/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jiar">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jiar's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                JRAlertController
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-11T11:11:11+08:00">
+                2016-11-11
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2017-10-21T17:46:17+08:00">
+                2017-10-21
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            <!--noindex-->
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/11/11/JRAlertController/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count hc-comment-count" data-xid="2016/11/11/JRAlertController/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+              <!--/noindex-->
+            
+          
+
+          
+          
+             <span id="/2016/11/11/JRAlertController/" class="leancloud_visitors" data-flag-title="JRAlertController">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="JRAlertController"><a href="#JRAlertController" class="headerlink" title="JRAlertController"></a>JRAlertController</h2><h3 id="JRAlertController-1"><a href="#JRAlertController-1" class="headerlink" title="JRAlertController"></a>JRAlertController</h3><p><a href="https://github.com/Jiar/JRAlertController/" target="_blank" rel="external">JRAlertController</a>：基于apple的UIAlertController控件api，用swift重新打造的UI控件，更符合主流app的风格。</p>
+<h3 id="JRAlertController总体效果图"><a href="#JRAlertController总体效果图" class="headerlink" title="JRAlertController总体效果图"></a>JRAlertController总体效果图</h3><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_Main.gif" alt="UIAlertController_Main"></p>
+<a id="more"></a>
+<h3 id="UIAlertController-历史"><a href="#UIAlertController-历史" class="headerlink" title="UIAlertController 历史"></a>UIAlertController 历史</h3><p>在日常iOS开发中，我们经常能遇到这种情况（我们需要在某个地方让用户做一个选择），比如说：一个博客，点击右上角的按钮后，你可以执行“修改博客”、“删除博客”两个操作。既然是这么常用的操作，Apple当然给我们提供了常用的控件，那就是UIAlertController。</p>
+<p><code>UIAlertController</code>自iOS8出现，在那之前，我们用的是<code>UIAlertView</code>和<code>UIActionSheet</code>。iOS8之后，<code>UIAlertView</code>与<code>UIActionSheet</code>合并为<code>UIAlertController</code>，并以一个<code>style</code>属性来区分原来的<code>UIAlertView</code>和<code>UIActionSheet</code>的作用，还有就是用闭包回调的方式代替了之前的代理（我觉得闭包回调的方式写起来方便多了）。</p>
+<h3 id="UIAlertController-不足"><a href="#UIAlertController-不足" class="headerlink" title="UIAlertController 不足"></a>UIAlertController 不足</h3><p>那么既然<code>UIAlertController</code>已经是在iOS8优化后的控件（至少api上优化了），那么为何还来个<code>JRAlertController</code>呢？</p>
+<hr>
+<p>在开发中我们会发现，<code>UIAlertController</code>有以下几个不足之处：</p>
+<p>1.无论是<code>alert</code>还是<code>sheet</code>下的界面，边角过于圆滑，尤其当<code>style</code>是<code>sheet</code>的时候，从底部弹出来那么一个过于圆滑的界面，反正我不觉得好看，不信你看微博、微信这些主流app是怎么做的<br>微博的效果：<br><img src="/2016/11/11/JRAlertController/weibo.jpeg" alt="weibo"></p>
+<p>2.点击背景部分，无法<code>dismiss UIAlertController</code></p>
+<p>3.<code>alert</code>样式下，添加过多的<code>UITextField</code>和<code>Action</code>后，界面显示丑陋。（虽然不会有这种需求，也不该在<code>UIAlertController</code>过量添加，毕竟<code>UIAlertController</code>适用于”短暂”操作，但是过多添加后，界面确实不好看，后面会有效果图）</p>
+<p>基于以上几点不足，我认为足以自定义一个控件来代替<code>UIAlertController</code>，所以<code>JRAlertController</code>诞生了。</p>
+<h3 id="JRAlertController-与-UIAlertController-的不同"><a href="#JRAlertController-与-UIAlertController-的不同" class="headerlink" title="JRAlertController 与 UIAlertController 的不同"></a>JRAlertController 与 UIAlertController 的不同</h3><p>我在开头提到过<code>UIAlertController</code>的<code>api</code>,它的<code>api</code>还是不错的，所以我在写<code>JRAlertController</code>的时候，几乎完全采用了<code>UIAlertController</code>的<code>api</code>，一方面<code>api</code>不错，另一方面方便大家从<code>UIAlertController</code>迁移到<code>JRAlertController</code>，基本上你只需要把原来<code>UIAlertController</code>部分的<code>UI</code>开头的改成<code>JR</code>就可以了，我提供的Demo中，大家便能很清晰的看到这一点。</p>
+<hr>
+<h5 id="还有的几处不同点："><a href="#还有的几处不同点：" class="headerlink" title="还有的几处不同点："></a>还有的几处不同点：</h5><p>1.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">// UIAlertController 的初始化方法</div><div class="line">public convenience init(title: String?, message: String?, preferredStyle: UIAlertControllerStyle)</div><div class="line"></div><div class="line">// JRAlertController 的初始化方法</div><div class="line">public convenience init(title: String? = nil, message: String? = nil, preferredStyle: JRAlertControllerStyle = .actionSheet)</div></pre></td></tr></table></figure></p>
+<p>你会发现，<code>JRAlertController</code>提供了<code>title</code>参数和<code>message</code>参数的默认值，恩……如果你不需要<code>title</code>或<code>message</code>中的某一个（或都不需要），这样可以帮你少写一点点代码。</p>
+<p>2.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// UIAlertController进入方法</div><div class="line">// 这里的alertController为UIAlertController的实例，self为当前UIViewController</div><div class="line">self.present(alertController, animated: true, completion: nil)</div><div class="line"></div><div class="line">// JRAlertController进入方法</div><div class="line">// 这里的alertController为JRAlertController的实例，self为当前UIViewController</div><div class="line">alertController.jr_show(onRootView: self)</div></pre></td></tr></table></figure></p>
+<p>至于这里为什么要做，这里涉及到<code>JRAlertController</code>从底部上移的动画效果。（目前我能想到的方法是在<code>JRAlertController</code>的<code>viewWillAppear</code>中执行一个上移动画，如果调用系统的<code>present</code>进入的话，如果又给animated参数设置true，那么<code>JRAlertController</code>的进入效果会比较丑陋。可能有朋友会问，为什么不使用iOS的转场动画，我有尝试去用过，但是也需要第一个执行<code>present</code>的<code>UIViewController</code>做很多其他的动作，写更多的代码。如果有朋友看了我的代码后，有更好的方式来处理进入效果，欢迎到<a href="https://github.com/Jiar/JRAlertController/" target="_blank" rel="external">本项目的Github地址</a>来<code>Pull requests</code>）</p>
+<p>3.<br><code>UIAlertController</code>里面有一个属性<code>preferredAction</code>，要求系统版本至少为iOS9。而在<code>JRAlertController</code>中，你只需要在iOS8下就可以使用了（如果不是<code>UIViewController</code>的<code>modalPresentationStyle</code>属性的<code>.overCurrentContext</code>值要求iOS8，我们就可以兼容到iOS7了）</p>
+<h3 id="JRAlertController-与-UIAlertController-相同点以及说明"><a href="#JRAlertController-与-UIAlertController-相同点以及说明" class="headerlink" title="JRAlertController 与 UIAlertController 相同点以及说明"></a>JRAlertController 与 UIAlertController 相同点以及说明</h3><p>因为<code>JRAlertController</code>是采用几乎和<code>UIAlertController</code>一样的<code>api</code>来实现的，所以<code>JRAlertController</code>的大体功能效果会和<code>UIAlertController</code>一样。同时也是为了方便打算使用<code>JRAlertController</code>的朋友们能够在迁移到<code>JRAlertController</code>的时候没有后顾之忧。</p>
+<hr>
+<h5 id="他们的相同点说明："><a href="#他们的相同点说明：" class="headerlink" title="他们的相同点说明："></a>他们的相同点说明：</h5><p>1.只有<code>alert</code>样式下，才可以添加<code>UITextField</code>。</p>
+<p>2.<code>action</code>也有样式，但是<code>cancel</code>样式的<code>action</code>只能添加一个，添加多了<code>assert</code>。</p>
+<p>3.<code>preferredAction</code>属性也只能在<code>alert</code>样式下才能使用。</p>
+<p>以上三点别问我为什么这么规定，Apple的<code>UIAlertController</code>就是这么定的。</p>
+<hr>
+<h5 id="其他说明："><a href="#其他说明：" class="headerlink" title="其他说明："></a>其他说明：</h5><p>1.<code>JRAlertController</code>的<code>preferredAction</code>属性补充说明：除了只能在<code>alert</code>样式下才能使用外，如果存在<code>UITextField</code>，那么在<code>UITextField</code>列表的最后一个<code>UITextField</code>的键盘中点击<code>return</code>按钮，将触发<code>preferredAction</code>回调，并且<code>dismiss</code>当前<code>JRAlertController</code>。</p>
+<p>2.<code>JRAlertController</code>里面会有一个属性是这样的：<code>open var textFields: [UITextField]?</code>。所有你添加的<code>UITextField</code>都会在这里。注意的是，<code>JRAlertController</code>已经对所以添加的<code>UITextField</code>进行了代理操作。如果你覆盖了代理，影响也不是很大，但是至少会影响你以下两点：</p>
+<p>①.在<code>UITextField</code>中点击键盘上<code>return</code>按钮时无法从当前<code>UITextField</code>进入到下一个<code>UITextField</code>。<br>②.如果当前<code>UITextField</code>已经是最后一个<code>UITextField</code>，同时你又设置了<code>preferredAction</code>，则无法触发<code>preferredAction</code>的回调，以及无法<code>dismiss</code>当前<code>JRAlertController</code>。</p>
+<p>3.如果需要在<code>JRAlertController</code>里，主动<code>dismiss</code>，建议调用<code>jr_dismiss()</code>。</p>
+<h3 id="JRAlertController-与-UIAlertController-Gif图效果对比"><a href="#JRAlertController-与-UIAlertController-Gif图效果对比" class="headerlink" title="JRAlertController 与 UIAlertController Gif图效果对比"></a>JRAlertController 与 UIAlertController Gif图效果对比</h3><p>说了那么多，来几张效果图对比下<code>JRAlertController</code>与<code>UIAlertController</code>的区别</p>
+<h4 id="JRAlertController-实现效果图"><a href="#JRAlertController-实现效果图" class="headerlink" title="JRAlertController 实现效果图"></a>JRAlertController 实现效果图</h4><h5 id="JRAlertController在alert样式下简单显示"><a href="#JRAlertController在alert样式下简单显示" class="headerlink" title="JRAlertController在alert样式下简单显示"></a>JRAlertController在alert样式下简单显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_alert_simple.gif" alt="JRAlertController_alert_simple"></p>
+<h5 id="JRAlertController在alert样式下复杂显示"><a href="#JRAlertController在alert样式下复杂显示" class="headerlink" title="JRAlertController在alert样式下复杂显示"></a>JRAlertController在alert样式下复杂显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_alert_multiple.gif" alt="JRAlertController_alert_multiple"></p>
+<h5 id="JRAlertController在sheet样式下简单显示"><a href="#JRAlertController在sheet样式下简单显示" class="headerlink" title="JRAlertController在sheet样式下简单显示"></a>JRAlertController在sheet样式下简单显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_sheet_simple.gif" alt="JRAlertController_sheet_simple"></p>
+<h5 id="JRAlertController在sheet样式下复杂显示"><a href="#JRAlertController在sheet样式下复杂显示" class="headerlink" title="JRAlertController在sheet样式下复杂显示"></a>JRAlertController在sheet样式下复杂显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/JRAlertController_sheet_multiple.gif" alt="JRAlertController_sheet_multiple"></p>
+<h4 id="UIAlertController-实现效果图"><a href="#UIAlertController-实现效果图" class="headerlink" title="UIAlertController 实现效果图"></a>UIAlertController 实现效果图</h4><h5 id="UIAlertController在alert样式下简单显示"><a href="#UIAlertController在alert样式下简单显示" class="headerlink" title="UIAlertController在alert样式下简单显示"></a>UIAlertController在alert样式下简单显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_alert_simple.gif" alt="UIAlertController_alert_simple"></p>
+<h5 id="UIAlertController在alert样式下复杂显示"><a href="#UIAlertController在alert样式下复杂显示" class="headerlink" title="UIAlertController在alert样式下复杂显示"></a>UIAlertController在alert样式下复杂显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_alert_multiple.gif" alt="UIAlertController_alert_multiple"></p>
+<h5 id="UIAlertController在sheet样式下简单显示"><a href="#UIAlertController在sheet样式下简单显示" class="headerlink" title="UIAlertController在sheet样式下简单显示"></a>UIAlertController在sheet样式下简单显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_sheet_simple.gif" alt="UIAlertController_sheet_simple"></p>
+<h5 id="UIAlertController在sheet样式下复杂显示"><a href="#UIAlertController在sheet样式下复杂显示" class="headerlink" title="UIAlertController在sheet样式下复杂显示"></a>UIAlertController在sheet样式下复杂显示</h5><p><img src="https://raw.githubusercontent.com/Jiar/JRAlertController/master/Screenshot/UIAlertController_sheet_multiple.gif" alt="UIAlertController_sheet_multiple"></p>
+<p>以上就是对<code>JRAlertController</code>的一些说明，下面放是官方性信息：</p>
+<hr>
+<h3 id="Requirements"><a href="#Requirements" class="headerlink" title="Requirements"></a>Requirements</h3><ul>
+<li>iOS 8.0+</li>
+<li>Xcode 8.0+</li>
+<li>Swift 3.0+</li>
+</ul>
+<h3 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h3><h4 id="CocoaPods"><a href="#CocoaPods" class="headerlink" title="CocoaPods"></a>CocoaPods</h4><p><a href="http://cocoapods.org" target="_blank" rel="external">CocoaPods</a> is a dependency manager for Cocoa projects. You can install it with the following command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ gem install cocoapods</div></pre></td></tr></table></figure>
+<blockquote>
+<p>CocoaPods 1.1.0+ is required to build JRAlertController 1.0.0</p>
+</blockquote>
+<p>To integrate JRAlertController into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">source <span class="string">'https://github.com/CocoaPods/Specs.git'</span></div><div class="line">platform <span class="symbol">:ios</span>, <span class="string">'8.0'</span></div><div class="line">use_frameworks!</div><div class="line"></div><div class="line">target <span class="string">'&lt;Your Target Name&gt;'</span> <span class="keyword">do</span></div><div class="line">    pod <span class="string">'JRAlertController'</span>, <span class="string">'~&gt; 1.0。0'</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>Then, run the following command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ pod install</div></pre></td></tr></table></figure>
+<h4 id="Manually"><a href="#Manually" class="headerlink" title="Manually"></a>Manually</h4><p>If you prefer not to use either of the aforementioned dependency managers, you can integrate JRAlertController into your project manually.</p>
+<h5 id="Embedded-Framework"><a href="#Embedded-Framework" class="headerlink" title="Embedded Framework"></a>Embedded Framework</h5><ul>
+<li><p>Open up Terminal, <code>cd</code> into your top-level project directory, and run the following command “if” your project is not initialized as a git repository:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git init</div></pre></td></tr></table></figure>
+</li>
+<li><p>Add JRAlertController as a git <a href="http://git-scm.com/docs/git-submodule" target="_blank" rel="external">submodule</a> by running the following command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git submodule add https://github.com/Jiar/JRAlertController.git</div></pre></td></tr></table></figure>
+</li>
+<li><p>Open the new <code>JRAlertController</code> folder, and drag the <code>JRAlertController.xcodeproj</code> into the Project Navigator of your application’s Xcode project.</p>
+<blockquote>
+<p>It should appear nested underneath your application’s blue project icon. Whether it is above or below all the other Xcode groups does not matter.</p>
+</blockquote>
+</li>
+<li><p>Select the <code>JRAlertController.xcodeproj</code> in the Project Navigator and verify the deployment target matches that of your application target.</p>
+</li>
+<li>Next, select your application project in the Project Navigator (blue project icon) to navigate to the target configuration window and select the application target under the “Targets” heading in the sidebar.</li>
+<li>In the tab bar at the top of that window, open the “General” panel.</li>
+<li>Click on the <code>+</code> button under the “Embedded Binaries” section.</li>
+<li><p>You will see two different <code>JRAlertController.xcodeproj</code> folders each with two different versions of the <code>JRAlertController.framework</code> nested inside a <code>Products</code> folder.</p>
+<blockquote>
+<p>It does not matter which <code>Products</code> folder you choose from, but it does matter whether you choose the top or bottom <code>JRAlertController.framework</code>.</p>
+</blockquote>
+</li>
+<li><p>Select the top <code>JRAlertController.framework</code> for iOS.</p>
+</li>
+<li><p>And that’s it!</p>
+<blockquote>
+<p>The <code>JRAlertController.framework</code> is automagically added as a target dependency, linked framework and embedded framework in a copy files build phase which is all you need to build on the simulator and a device.</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h3 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h3><h4 id="JRAlertController-alert-simple"><a href="#JRAlertController-alert-simple" class="headerlink" title="JRAlertController_alert_simple"></a>JRAlertController_alert_simple</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> alertController = <span class="type">JRAlertController</span>(title: <span class="string">"login tip"</span>, message: <span class="string">"please input account and password"</span>, preferredStyle: .alert)</div><div class="line"><span class="keyword">let</span> cancelAction = <span class="type">JRAlertAction</span>(title: <span class="string">"cancel"</span>, style: .cancel, handler:  &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"cancel"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> loginAction = <span class="type">JRAlertAction</span>(title: <span class="string">"login"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"login"</span>)</div><div class="line">&#125;)</div><div class="line">alertController.addAction(cancelAction)</div><div class="line">alertController.addAction(loginAction)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.keyboardType = .<span class="keyword">default</span></div><div class="line">    textField.placeholder = <span class="string">"please input account"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.keyboardType = .<span class="keyword">default</span></div><div class="line">    textField.isSecureTextEntry = <span class="literal">true</span></div><div class="line">    textField.placeholder = <span class="string">"please input password"</span></div><div class="line">&#125;)</div><div class="line"><span class="comment">// must use this function to show JRAlertController</span></div><div class="line"><span class="comment">// self is a UIControllerView</span></div><div class="line">alertController.jr_show(onRootView: <span class="keyword">self</span>)</div></pre></td></tr></table></figure>
+<h4 id="JRAlertController-alert-multiple"><a href="#JRAlertController-alert-multiple" class="headerlink" title="JRAlertController_alert_multiple"></a>JRAlertController_alert_multiple</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> alertController = <span class="type">JRAlertController</span>(title: <span class="string">"I am title,I am title,I am title,I am title,I am title"</span>, message: <span class="string">"I am message, I am message, I am message, I am message, I am message, I am message, I am message, I am message, I am message"</span>, preferredStyle: .alert)</div><div class="line"><span class="keyword">let</span> cancelAction = <span class="type">JRAlertAction</span>(title: <span class="string">"cancel"</span>, style: .cancel, handler:  &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"cancel"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> deleteAction = <span class="type">JRAlertAction</span>(title: <span class="string">"delete"</span>, style: .destructive, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"delete"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction = <span class="type">JRAlertAction</span>(title: <span class="string">"archive"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction1 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive1"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive1"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction2 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive2"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive2"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction3 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive3"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive3"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction4 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive4"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive4"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction5 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive5"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive5"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction6 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive6"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive6"</span>)</div><div class="line">&#125;)</div><div class="line">alertController.addAction(cancelAction)</div><div class="line">alertController.addAction(deleteAction)</div><div class="line">alertController.addAction(archiveAction)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .black</div><div class="line">    textField.text = <span class="string">"black"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .darkGray</div><div class="line">    textField.text = <span class="string">"darkGray"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .lightGray</div><div class="line">    textField.text = <span class="string">"lightGray"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.backgroundColor = .black</div><div class="line">    textField.textColor = .white</div><div class="line">    textField.text = <span class="string">"white"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .gray</div><div class="line">    textField.text = <span class="string">"gray"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .red</div><div class="line">    textField.text = <span class="string">"red"</span></div><div class="line">&#125;)</div><div class="line">alertController.addAction(archiveAction1)</div><div class="line">alertController.addAction(archiveAction2)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .green</div><div class="line">    textField.text = <span class="string">"green"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .blue</div><div class="line">    textField.text = <span class="string">"blue"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .cyan</div><div class="line">    textField.text = <span class="string">"cyan"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .yellow</div><div class="line">    textField.text = <span class="string">"yellow"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .magenta</div><div class="line">    textField.text = <span class="string">"magenta"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .orange</div><div class="line">    textField.text = <span class="string">"orange"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .purple</div><div class="line">    textField.text = <span class="string">"purple"</span></div><div class="line">&#125;)</div><div class="line">alertController.addTextField(configurationHandler: &#123; (textField: <span class="type">UITextField</span>) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    textField.textColor = .brown</div><div class="line">    textField.text = <span class="string">"brown"</span></div><div class="line">&#125;)</div><div class="line">alertController.addAction(archiveAction3)</div><div class="line">alertController.addAction(archiveAction4)</div><div class="line">alertController.addAction(archiveAction5)</div><div class="line">alertController.addAction(archiveAction6)</div><div class="line">alertController.preferredAction  = archiveAction6</div><div class="line"><span class="comment">// must use this function to show JRAlertController</span></div><div class="line"><span class="comment">// self is a UIControllerView</span></div><div class="line">alertController.jr_show(onRootView: <span class="keyword">self</span>)</div></pre></td></tr></table></figure>
+<h4 id="JRAlertController-sheet-simple"><a href="#JRAlertController-sheet-simple" class="headerlink" title="JRAlertController_sheet_simple"></a>JRAlertController_sheet_simple</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">      <span class="keyword">let</span> alertController = <span class="type">JRAlertController</span>(title: <span class="string">"blog tip"</span>, message: <span class="string">"Please select the option to use the corresponding option to operate your blog"</span>, preferredStyle: .actionSheet)</div><div class="line"><span class="comment">// let alertController = JRAlertController(title: "blog tip")</span></div><div class="line"><span class="comment">// let alertController = JRAlertController(message: "Please select the option to use the corresponding option to operate your blog")</span></div><div class="line"><span class="comment">// let alertController = JRAlertController()</span></div><div class="line">      <span class="keyword">let</span> addAction = <span class="type">JRAlertAction</span>(title: <span class="string">"add"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">          (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">          <span class="built_in">print</span>(<span class="string">"add blog"</span>)</div><div class="line">      &#125;)</div><div class="line">      <span class="keyword">let</span> modifyAction = <span class="type">JRAlertAction</span>(title: <span class="string">"modify"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">          (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">          <span class="built_in">print</span>(<span class="string">"modify blog"</span>)</div><div class="line">      &#125;)</div><div class="line">      <span class="keyword">let</span> deleteAction = <span class="type">JRAlertAction</span>(title: <span class="string">"delete"</span>, style: .destructive, handler: &#123;</div><div class="line">          (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">          <span class="built_in">print</span>(<span class="string">"delete blog"</span>)</div><div class="line">      &#125;)</div><div class="line">      <span class="keyword">let</span> cancelAction = <span class="type">JRAlertAction</span>(title: <span class="string">"cancel"</span>, style: .cancel, handler:  &#123;</div><div class="line">          (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">          <span class="built_in">print</span>(<span class="string">"cancel"</span>)</div><div class="line">      &#125;)</div><div class="line">      alertController.addAction(addAction)</div><div class="line">      alertController.addAction(modifyAction)</div><div class="line">      alertController.addAction(deleteAction)</div><div class="line">      alertController.addAction(cancelAction)</div><div class="line">      <span class="comment">// must use this function to show JRAlertController</span></div><div class="line">      <span class="comment">// self is a UIControllerView</span></div><div class="line">      alertController.jr_show(onRootView: <span class="keyword">self</span>)</div></pre></td></tr></table></figure>
+<h4 id="JRAlertController-sheet-multiple"><a href="#JRAlertController-sheet-multiple" class="headerlink" title="JRAlertController_sheet_multiple"></a>JRAlertController_sheet_multiple</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> alertController = <span class="type">JRAlertController</span>(title: <span class="string">"I am title,I am title,I am title,I am title,I am title"</span>, message: <span class="string">"I am message, I am message, I am message, I am message, I am message, I am message, I am message, I am message, I am message"</span>, preferredStyle: .actionSheet)</div><div class="line"><span class="keyword">let</span> cancelAction = <span class="type">JRAlertAction</span>(title: <span class="string">"cancel"</span>, style: .cancel, handler: <span class="literal">nil</span>)</div><div class="line"><span class="keyword">let</span> deleteAction = <span class="type">JRAlertAction</span>(title: <span class="string">"delete"</span>, style: .destructive, handler: <span class="literal">nil</span>)</div><div class="line"><span class="keyword">let</span> archiveAction = <span class="type">JRAlertAction</span>(title: <span class="string">"archive"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction1 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive1"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive1"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction2 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive2"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive2"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction3 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive3"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive3"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction4 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive4"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive4"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction5 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive5"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive5"</span>)</div><div class="line">&#125;)</div><div class="line"><span class="keyword">let</span> archiveAction6 = <span class="type">JRAlertAction</span>(title: <span class="string">"archive6"</span>, style: .<span class="keyword">default</span>, handler: &#123;</div><div class="line">    (action: <span class="type">JRAlertAction</span>!) -&gt; <span class="type">Void</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"archive6"</span>)</div><div class="line">&#125;)</div><div class="line">alertController.addAction(cancelAction)</div><div class="line">alertController.addAction(deleteAction)</div><div class="line">alertController.addAction(archiveAction)</div><div class="line">alertController.addAction(archiveAction1)</div><div class="line">alertController.addAction(archiveAction2)</div><div class="line">alertController.addAction(archiveAction3)</div><div class="line">alertController.addAction(archiveAction4)</div><div class="line">alertController.addAction(archiveAction5)</div><div class="line">alertController.addAction(archiveAction6)</div><div class="line"><span class="comment">// must use this function to show JRAlertController</span></div><div class="line"><span class="comment">// self is a UIControllerView</span></div><div class="line">alertController.jr_show(onRootView: <span class="keyword">self</span>)</div></pre></td></tr></table></figure>
+<h3 id="License"><a href="#License" class="headerlink" title="License"></a>License</h3><p>JRAlertController is released under the Apache-2.0 license. See <a href="https://raw.githubusercontent.com/Jiar/JRAlertController/master/LICENSE" target="_blank" rel="external">LICENSE</a> for details.</p>
+<h3 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h3><p>本文完，大家如何喜欢<code>JRAlertController</code>，欢迎来<a href="https://github.com/Jiar/JRAlertController/" target="_blank" rel="external">JRAlertController</a>对本项目Star。读者在阅读本文时如有发现错误或不恰当指出，欢迎在评论中指出。如果读者还有一些相关方面的疑问，也欢迎在评论中提出。</p>
+<p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2016/11/11/JRAlertController/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      Jiar
+    </li>
+    <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.jiar.vip/2016/11/11/JRAlertController/" title="JRAlertController">https://blog.jiar.vip/2016/11/11/JRAlertController/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong>
+      本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+            <a href="/tags/JRAlertController/" rel="tag"># JRAlertController</a>
+          
+            <a href="/tags/UIAlertController/" rel="tag"># UIAlertController</a>
+          
+            <a href="/tags/alert/" rel="tag"># alert</a>
+          
+            <a href="/tags/sheet/" rel="tag"># sheet</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/28/iOS项目持续集成/" rel="next" title="iOS项目持续集成">
+                <i class="fa fa-chevron-left"></i> iOS项目持续集成
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/09/适配Xcode9-0-beta与Swift4.0/" rel="prev" title="适配Xcode9.0-beta与Swift4.0">
+                适配Xcode9.0-beta与Swift4.0 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="hypercomments_widget"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jiar" />
+          <p class="site-author-name" itemprop="name">Jiar</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://www.github.com/Jiar" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/JiarYoo" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/u/2268197591" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JRAlertController"><span class="nav-number">1.</span> <span class="nav-text">JRAlertController</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JRAlertController-1"><span class="nav-number">1.1.</span> <span class="nav-text">JRAlertController</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JRAlertController总体效果图"><span class="nav-number">1.2.</span> <span class="nav-text">JRAlertController总体效果图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UIAlertController-历史"><span class="nav-number">1.3.</span> <span class="nav-text">UIAlertController 历史</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UIAlertController-不足"><span class="nav-number">1.4.</span> <span class="nav-text">UIAlertController 不足</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JRAlertController-与-UIAlertController-的不同"><span class="nav-number">1.5.</span> <span class="nav-text">JRAlertController 与 UIAlertController 的不同</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#还有的几处不同点："><span class="nav-number">1.5.0.1.</span> <span class="nav-text">还有的几处不同点：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JRAlertController-与-UIAlertController-相同点以及说明"><span class="nav-number">1.6.</span> <span class="nav-text">JRAlertController 与 UIAlertController 相同点以及说明</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#他们的相同点说明："><span class="nav-number">1.6.0.1.</span> <span class="nav-text">他们的相同点说明：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#其他说明："><span class="nav-number">1.6.0.2.</span> <span class="nav-text">其他说明：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JRAlertController-与-UIAlertController-Gif图效果对比"><span class="nav-number">1.7.</span> <span class="nav-text">JRAlertController 与 UIAlertController Gif图效果对比</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JRAlertController-实现效果图"><span class="nav-number">1.7.1.</span> <span class="nav-text">JRAlertController 实现效果图</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#JRAlertController在alert样式下简单显示"><span class="nav-number">1.7.1.1.</span> <span class="nav-text">JRAlertController在alert样式下简单显示</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#JRAlertController在alert样式下复杂显示"><span class="nav-number">1.7.1.2.</span> <span class="nav-text">JRAlertController在alert样式下复杂显示</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#JRAlertController在sheet样式下简单显示"><span class="nav-number">1.7.1.3.</span> <span class="nav-text">JRAlertController在sheet样式下简单显示</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#JRAlertController在sheet样式下复杂显示"><span class="nav-number">1.7.1.4.</span> <span class="nav-text">JRAlertController在sheet样式下复杂显示</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UIAlertController-实现效果图"><span class="nav-number">1.7.2.</span> <span class="nav-text">UIAlertController 实现效果图</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#UIAlertController在alert样式下简单显示"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">UIAlertController在alert样式下简单显示</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#UIAlertController在alert样式下复杂显示"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">UIAlertController在alert样式下复杂显示</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#UIAlertController在sheet样式下简单显示"><span class="nav-number">1.7.2.3.</span> <span class="nav-text">UIAlertController在sheet样式下简单显示</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#UIAlertController在sheet样式下复杂显示"><span class="nav-number">1.7.2.4.</span> <span class="nav-text">UIAlertController在sheet样式下复杂显示</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Requirements"><span class="nav-number">1.8.</span> <span class="nav-text">Requirements</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Installation"><span class="nav-number">1.9.</span> <span class="nav-text">Installation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CocoaPods"><span class="nav-number">1.9.1.</span> <span class="nav-text">CocoaPods</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Manually"><span class="nav-number">1.9.2.</span> <span class="nav-text">Manually</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Embedded-Framework"><span class="nav-number">1.9.2.1.</span> <span class="nav-text">Embedded Framework</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Usage"><span class="nav-number">1.10.</span> <span class="nav-text">Usage</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JRAlertController-alert-simple"><span class="nav-number">1.10.1.</span> <span class="nav-text">JRAlertController_alert_simple</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JRAlertController-alert-multiple"><span class="nav-number">1.10.2.</span> <span class="nav-text">JRAlertController_alert_multiple</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JRAlertController-sheet-simple"><span class="nav-number">1.10.3.</span> <span class="nav-text">JRAlertController_sheet_simple</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JRAlertController-sheet-multiple"><span class="nav-number">1.10.4.</span> <span class="nav-text">JRAlertController_sheet_multiple</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#License"><span class="nav-number">1.11.</span> <span class="nav-text">License</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结束语"><span class="nav-number">1.12.</span> <span class="nav-text">结束语</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jiar</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+		<script type="text/javascript">
+		_hcwp = window._hcwp || [];
+
+		_hcwp.push({widget:"Bloggerstream", widget_id: 93311, selector:".hc-comment-count", label: "{\%COUNT%\}" });
+
+		
+		_hcwp.push({widget:"Stream", widget_id: 93311, xid: "2016/11/11/JRAlertController/"});
+		
+
+		(function() {
+		if("HC_LOAD_INIT" in window)return;
+		HC_LOAD_INIT = true;
+		var lang = (navigator.language || navigator.systemLanguage || navigator.userLanguage || "en").substr(0, 2).toLowerCase();
+		var hcc = document.createElement("script"); hcc.type = "text/javascript"; hcc.async = true;
+		hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/93311/"+lang+"/widget.js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hcc, s.nextSibling);
+		})();
+		</script>
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("JaHzdspdCePEVSkcxp5vTzco-gzGzoHsz", "1HXQfPBkBx2xAsJgQLPaIStx");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

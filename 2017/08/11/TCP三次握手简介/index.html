@@ -1,0 +1,1082 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="计算机网络,TCP," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="TCP三次握手简介简书阅读地址在这里 身处在互联网时代，计算机网络至关重要，然而却一直没有好好的了解这方面的知识。好在今年总算是毕业了，工作也相对稳定了，是时候拿起书籍阅读，提升自己。 首先，就拿最近接触的TCP三次握手来小试，若本文存在错误或者不恰当指出，还望指出 :)">
+<meta name="keywords" content="计算机网络,TCP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP三次握手简介">
+<meta property="og:url" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/index.html">
+<meta property="og:site_name" content="Jiar&#39;s Blog">
+<meta property="og:description" content="TCP三次握手简介简书阅读地址在这里 身处在互联网时代，计算机网络至关重要，然而却一直没有好好的了解这方面的知识。好在今年总算是毕业了，工作也相对稳定了，是时候拿起书籍阅读，提升自己。 首先，就拿最近接触的TCP三次握手来小试，若本文存在错误或者不恰当指出，还望指出 :)">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/tcp_hand_shake_detail.png">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/tcp_head.png">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/tcp_hand_shake_detail.png">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/tcp_hand_shake_three_times.png">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/wireshark_welcome.png">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/wireshark_main.png">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/wireshark_tcp_shake.png">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/wireshark_tcp_shake_first.png">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/wireshark_tcp_shake_second.png">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/wireshark_tcp_shake_third.png">
+<meta property="og:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/Dingyuehao.jpg">
+<meta property="og:updated_time" content="2017-10-23T02:53:46.058Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TCP三次握手简介">
+<meta name="twitter:description" content="TCP三次握手简介简书阅读地址在这里 身处在互联网时代，计算机网络至关重要，然而却一直没有好好的了解这方面的知识。好在今年总算是毕业了，工作也相对稳定了，是时候拿起书籍阅读，提升自己。 首先，就拿最近接触的TCP三次握手来小试，若本文存在错误或者不恰当指出，还望指出 :)">
+<meta name="twitter:image" content="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/tcp_hand_shake_detail.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/"/>
+
+
+
+
+
+  <title> TCP三次握手简介 | Jiar's Blog </title>
+  <script type="text/javascript">
+    var host = "blog.jiar.vip";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+      window.location.protocol = "https";
+  </script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-78118193-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jiar's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jiar">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jiar's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                TCP三次握手简介
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-11T10:09:20+08:00">
+                2017-08-11
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2017-10-23T10:53:46+08:00">
+                2017-10-23
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/计算机网络/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            <!--noindex-->
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/08/11/TCP三次握手简介/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count hc-comment-count" data-xid="2017/08/11/TCP三次握手简介/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+              <!--/noindex-->
+            
+          
+
+          
+          
+             <span id="/2017/08/11/TCP三次握手简介/" class="leancloud_visitors" data-flag-title="TCP三次握手简介">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="TCP三次握手简介"><a href="#TCP三次握手简介" class="headerlink" title="TCP三次握手简介"></a>TCP三次握手简介</h1><p><a href="">简书阅读地址在这里</a></p>
+<p>身处在互联网时代，计算机网络至关重要，然而却一直没有好好的了解这方面的知识。好在今年总算是毕业了，工作也相对稳定了，是时候拿起书籍阅读，提升自己。</p>
+<p>首先，就拿最近接触的TCP三次握手来小试，若本文存在错误或者不恰当指出，还望指出 :)</p>
+<p><img src="/2017/08/11/TCP三次握手简介/tcp_hand_shake_detail.png" alt="TCP三次握手（原创图片）"></p>
+<a id="more"></a>
+<h3 id="TCP首部简介"><a href="#TCP首部简介" class="headerlink" title="TCP首部简介"></a>TCP首部简介</h3><p>TCP三次握手涉及到TCP首部的一些知识，所有有必要先介绍下TCP首部的相关知识。如果嫌TCP首部内容太多，那么只要看下<code>ACK</code>和<code>SYN</code>这两个标志比特就行了（因为TCP三次握手过程主要用到这两个标志比特）。</p>
+<p><img src="/2017/08/11/TCP三次握手简介/tcp_head.png" alt="TCP首部（图片来自网络））"></p>
+<blockquote>
+<ul>
+<li>源端口(Source Port)和目的端口(Destination Port): 分别占用16位，表示源端口号和目的端口号。用于区别主机中的不同进程，而IP地址是用来区分不同的主机的，源端口号和目的端口号配合上IP首部中的源IP地址和目的IP地址就能唯一的确定一个TCP连接。</li>
+<li>序号(Sequence Number): 用来标识从TCP发端向TCP收端发送的数据字节流，它表示在这个报文段中的的第一个数据字节在数据流中的序号。主要用来解决网络报乱序的问题。</li>
+<li>确认号(Acknowledgment Number): 32位确认序列号包含发送确认的一端所期望收到的下一个序号，因此，确认序号应当是上次已成功收到数据字节序号加1。不过，只有当标志位中的ACK标志（下面介绍）为1时该确认序列号的字段才有效。主要用来解决不丢包的问题。</li>
+<li>数据偏移(Offset): 给出首部中32 bit字的数目，需要这个值是因为任选字段的长度是可变的。这个字段占4bit（最多能表示15个32bit的的字，即4*15=60个字节的首部长度），因此TCP最多有60字节的首部。然而，没有选项字段，正常的长度是20字节。</li>
+<li>保留: 占6位。保留为今后使用，目前置为0。</li>
+<li>标志比特(TCP Flags): TCP首部中有6个标志比特，它们中的多个可同时被设置为1，主要是用于操控TCP的状态机的，依次为URG，ACK，PSH，RST，SYN，FIN。每个标志位的意思如下: <ul>
+<li>URG: 此标志表示TCP包的紧急指针域（后面马上就要说到）有效，用来保证TCP连接不被中断，并且督促中间层设备要尽快处理这些数据。</li>
+<li>ACK: 此标志表示应答域有效，就是说前面所说的TCP应答号将会包含在TCP数据包中。有两个取值: 0和1，为1的时候表示应答域有效，反之为0。</li>
+<li>PSH: 这个标志位表示Push操作。所谓Push操作就是指在数据包到达接收端以后，立即传送给应用程序，而不是在缓冲区中排队。</li>
+<li>RST: 这个标志表示连接复位请求。用来复位那些产生错误的连接，也被用来拒绝错误和非法的数据包。</li>
+<li>SYN: 表示同步序号，用来建立连接。SYN标志位和ACK标志位搭配使用，当连接请求的时候，SYN=1，ACK=0。连接被响应的时候，SYN=1，ACK=1。这个标志的数据包经常被用来进行端口扫描。扫描者发送一个只有SYN的数据包，如果对方主机响应了一个数据包回来 ，就表明这台主机存在这个端口。但是由于这种扫描方式只是进行TCP三次握手的第一次握手，因此这种扫描的成功表示被扫描的机器不很安全，一台安全的主机将会强制要求一个连接严格的进行TCP的三次握手。</li>
+<li>FIN: 表示发送端已经达到数据末尾，也就是说双方的数据传送完成，没有数据可以传送了，发送FIN标志位的TCP数据包后，连接将被断开。这个标志的数据包也经常被用于进行端口扫描。</li>
+</ul>
+</li>
+<li>窗口(Window): 也就是有名的滑动窗口，用来进行流量控制。这是一个复杂的问题，这篇博文中并不会进行总结。</li>
+<li>校验和: 占2字节。该字段检验的范围包括首部和数据这两部分。由发端计算和存储，并由收端进行验证。</li>
+<li>紧急指针: 占2个字节，紧急指针仅在URG=1时才有意义，它指出本报文段中的紧急数据的字节数。当所有紧急数据处理完毕时，TCP就告诉应用程序恢复到正常操作。值得注意的是，即使窗口为0时也可发送紧急数据。</li>
+<li>选项: 长度可变，最长可达40字节，当没有选项时，TCP的首部长度是20字节。最大报文段长度MSS，MSS是指每一个TCP报文段中的数据字段的最大长度。</li>
+</ul>
+</blockquote>
+<h3 id="TCP三次握手过程"><a href="#TCP三次握手过程" class="headerlink" title="TCP三次握手过程"></a>TCP三次握手过程</h3><p>其实以下这张图片就能说明TCP三次握手的过程以及握手两端状态的变化。</p>
+<p><img src="/2017/08/11/TCP三次握手简介/tcp_hand_shake_detail.png" alt="TCP三次握手（原创图片）"></p>
+<ul>
+<li><p>第一次握手: 建立连接。客户端发送连接请求报文段，将SYN位置为1，Seq(Sequence Number)为X(由操作系统动态随机选取一个32位长的序列号)。然后，客户端进入SYN_SEND状态，等待服务器的确认。</p>
+</li>
+<li><p>第二次握手: 服务器收到客户端的SYN报文段。需要对这个SYN报文段进行确认，设置Ack(Acknowledgment Number)设置为X(第一次握手中的Seq的值)+1。同时，自己还要发送SYN请求信息，将SYN位置为1，Seq(Sequence Number)为Y(由操作系统动态随机选取一个32位长的序列号)。服务器端将上述所有信息一并发送给客户端，此时服务器进入SYN_RECV状态。</p>
+</li>
+<li><p>第三次握手: 客户端收到服务器的报文段。然后将Ack(Acknowledgment Number)设置为Y(第二次握手中的Seq的值)+1，Seq(Sequence Number)设置为X+1<code>第二次握手中的Ack(Acknowledgment Number)值</code>，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务器端都进入ESTABLISHED状态，完成TCP三次握手。</p>
+</li>
+</ul>
+<p>TCP的SYN同步标志位被设计成占用一个字节的编号，既然是一个字节的数据，按照TCP对有数据的TCP Segment必须确认的原则，所以可看到一端发送SYN，则另一端用ACK进行响应。</p>
+<h3 id="握手中断"><a href="#握手中断" class="headerlink" title="握手中断"></a>握手中断</h3><ul>
+<li>第一次握手中断: A发送给B的SYN中断，A会周期性超时重传，直到A收到B的确认响应。</li>
+<li>第二次握手中断: B发送给A的SYN、ACK中断，B会周期性超时重传，直到B收到A的确认响应。</li>
+<li>第三次握手中断: A发送给B的ACK中断，A不会重传。超时后，B会重传SYN信号(即回到第二次握手)，直到B收到A的确认响应。</li>
+</ul>
+<h3 id="为什么要三次握手"><a href="#为什么要三次握手" class="headerlink" title="为什么要三次握手"></a>为什么要三次握手</h3><p>以下是两种比较权威说法：</p>
+<blockquote>
+<ul>
+<li><p>在谢希仁著《计算机网络》第四版中讲“三次握手”的目的是“为了防止已失效的连接请求报文段突然又传送到了服务端，因而产生错误”。在另一部经典的《计算机网络》一书中讲“三次握手”的目的是为了解决“网络中存在延迟的重复分组”的问题。这两种不用的表述其实阐明的是同一个问题。谢希仁版《计算机网络》中的例子是这样的，“已失效的连接请求报文段”的产生在这样一种情况下：client发出的第一个连接请求报文段并没有丢失，而是在某个网络结点长时间的滞留了，以致延误到连接释放以后的某个时间才到达server。本来这是一个早已失效的报文段。但server收到此失效的连接请求报文段后，就误认为是client再次发出的一个新的连接请求。于是就向client发出确认报文段，同意建立连接。假设不采用“三次握手”，那么只要server发出确认，新的连接就建立了。由于现在client并没有发出建立连接的请求，因此不会理睬server的确认，也不会向server发送数据。但server却以为新的运输连接已经建立，并一直等待client发来数据。这样，server的很多资源就白白浪费掉了。采用“三次握手”的办法可以防止上述现象发生。例如刚才那种情况，client不会向server的确认发出确认。server由于收不到确认，就知道client并没有要求建立连接。”</p>
+</li>
+<li><p>在Google Groups的<a href="https://groups.google.com/forum/#!forum/pongba" target="_blank" rel="external">TopLanguage</a>中看到一帖讨论TCP“三次握手”觉得很有意思。贴主提出“<a href="https://groups.google.com/forum/#!topic/pongba/kF6O7-MFxM0/discussion" target="_blank" rel="external">TCP建立连接为什么是三次握手？</a>”的问题，在众多回复中，有<a href="https://groups.google.com/forum/#!msg/pongba/kF6O7-MFxM0/5S7zIJ4yqKUJ" target="_blank" rel="external">一条回复</a>写道：“这个问题的本质是, 信道不可靠, 但是通信双发需要就某个问题达成一致. 而要解决这个问题,  无论你在消息中包含什么信息, 三次通信是理论上的最小值. 所以三次握手不是TCP本身的要求, 而是为了满足”在不可靠信道上可靠地传输信息”这一需求所导致的. 请注意这里的本质需求,信道不可靠, 数据传输要可靠. 三次达到了, 那后面你想接着握手也好, 发数据也好, 跟进行可靠信息传输的需求就没关系了. 因此,如果信道是可靠的, 即无论什么时候发出消息, 对方一定能收到, 或者你不关心是否要保证对方收到你的消息, 那就能像UDP那样直接发送消息就可以了.”。</p>
+</li>
+</ul>
+</blockquote>
+<p>是不是觉得好难懂的样子，那么可以先看下下面我画的对“为什么要三次握手”的图解，再回头看上面的讲解。</p>
+<p><img src="/2017/08/11/TCP三次握手简介/tcp_hand_shake_three_times.png" alt="为什么是三次握手？（原创图片）"></p>
+<p>由图可以得出，三次握手的本质是：将“四次握手”中的第二次、第三次握手合为一次，因为“四次握手”中的第二次、第三次握手都是由B向A传递报文，而且这两次发送报文的目的允许这两次报文合并为一次。</p>
+<h3 id="实践-抓包分析"><a href="#实践-抓包分析" class="headerlink" title="实践(抓包分析)"></a>实践(抓包分析)</h3><p>接下来我们通过网络抓包的方式来了解TCP的三次握手。我这里使用的抓包软件是<code>Wireshark</code>。</p>
+<ul>
+<li><p>打开<code>Wireshark</code>，选择需要捕获的网络。<br><img src="/2017/08/11/TCP三次握手简介/wireshark_welcome.png" alt="wireshark_welcome"></p>
+</li>
+<li><p>进入到主界面<br><img src="/2017/08/11/TCP三次握手简介/wireshark_main.png" alt="wireshark_main"></p>
+</li>
+<li><p>找到TCP三次握手<br><img src="/2017/08/11/TCP三次握手简介/wireshark_tcp_shake.png" alt="wireshark_tcp_shake"><br>观察<code>Wireshark</code>上部已经捕获的网络数据包列表部分，看<code>Info</code>部分，能找到相对连续的三列(分别显示<code>A -&gt; B [SYN]...</code>、<code>B -&gt; A [SYN, ACK]...</code>、<code>A -&gt; B [ACK]...</code>)，便是TCP的三次握手，在找的时候，注意<code>Source</code>栏和<code>Destination</code>栏中的ip地址的相对应，以及<code>Info</code>栏中的端口的对应。</p>
+</li>
+<li><p>查看第一次握手的详情<br><img src="/2017/08/11/TCP三次握手简介/wireshark_tcp_shake_first.png" alt="wireshark_tcp_shake_first"></p>
+</li>
+<li><p>查看第二次握手的详情<br><img src="/2017/08/11/TCP三次握手简介/wireshark_tcp_shake_second.png" alt="wireshark_tcp_shake_second"></p>
+</li>
+<li><p>查看第三次握手的详情<br><img src="/2017/08/11/TCP三次握手简介/wireshark_tcp_shake_third.png" alt="wireshark_tcp_shake_third"></p>
+</li>
+</ul>
+<p>选中每次一的握手数据包，点击下方的<code>Transmission Control Protocol(TCP)</code>，即可显示每次TCP握手的详情。在详情中，我们展开<code>Flags</code>，可以看到比特标志位是否有被设置的情况。<br>我们能发现，实践中的TCP状态情况，跟上面提到的理论是一致的。</p>
+<ul>
+<li>第一次握手: [SYN] Seq=0</li>
+<li>第二次握手: [SYN, ACK] Seq=0 Ack=1</li>
+<li>第三次握手: [ACK] Seq=1 Ack=1</li>
+</ul>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>感谢下列作者的分享</p>
+<blockquote>
+<ul>
+<li><a href="https://github.com/jawil/blog/issues/14" target="_blank" rel="external">通俗大白话来理解TCP协议的三次握手和四次分手 - jawil</a></li>
+<li><a href="http://www.cnblogs.com/techzi/archive/2011/10/18/2216751.html" target="_blank" rel="external">TCP连接建立过程中为什么需要“三次握手” - TechZi</a></li>
+<li><a href="https://zhihu.com/question/24853633/answer/115173386" target="_blank" rel="external">TCP 为什么是三次握手，为什么不是两次或四次？ - 回答作者: 车小胖</a></li>
+<li><a href="http://www.voidcn.com/blog/xifeijian/article/p-633810.html" target="_blank" rel="external">TCP为什么需要3次握手与4次挥手 - xifeijian</a></li>
+<li><a href="http://ab3813.blog.51cto.com/10538332/1773751" target="_blank" rel="external">TCP的三次握手与四次挥手过程的每一步的具体状态变换 - 阿铭铭</a></li>
+<li><a href="http://blog.sina.com.cn/s/blog_7f2a66c70102v5ry.html" target="_blank" rel="external">TCP报文段的首部格式 - wszddup</a></li>
+<li><a href="http://www.jianshu.com/p/0c4828e3b100" target="_blank" rel="external">TCP - x_zhaohu</a></li>
+<li><a href="http://www.jianshu.com/p/afa438cb7d73" target="_blank" rel="external">使用抓包工具分析TCP三次握手过程 - 嘿嘿_小余同学</a></li>
+</ul>
+</blockquote>
+<h3 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h3><p>以上便是我这次关于<code>TCP三次握手</code>方面的分享，同时也感谢我在文章中提到的博文的博主的分享。如果您在阅读本文时发现有错误或不恰当之处，欢迎在评论中指出。</p>
+<p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
+<p><img src="/2017/08/11/TCP三次握手简介/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      Jiar
+    </li>
+    <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.jiar.vip/2017/08/11/TCP三次握手简介/" title="TCP三次握手简介">https://blog.jiar.vip/2017/08/11/TCP三次握手简介/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong>
+      本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/计算机网络/" rel="tag"># 计算机网络</a>
+          
+            <a href="/tags/TCP/" rel="tag"># TCP</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/09/适配Xcode9-0-beta与Swift4.0/" rel="next" title="适配Xcode9.0-beta与Swift4.0">
+                <i class="fa fa-chevron-left"></i> 适配Xcode9.0-beta与Swift4.0
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/24/TCP四次挥手简介/" rel="prev" title="TCP四次挥手简介">
+                TCP四次挥手简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="hypercomments_widget"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jiar" />
+          <p class="site-author-name" itemprop="name">Jiar</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://www.github.com/Jiar" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/JiarYoo" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/u/2268197591" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP三次握手简介"><span class="nav-number">1.</span> <span class="nav-text">TCP三次握手简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP首部简介"><span class="nav-number">1.0.1.</span> <span class="nav-text">TCP首部简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP三次握手过程"><span class="nav-number">1.0.2.</span> <span class="nav-text">TCP三次握手过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#握手中断"><span class="nav-number">1.0.3.</span> <span class="nav-text">握手中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要三次握手"><span class="nav-number">1.0.4.</span> <span class="nav-text">为什么要三次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实践-抓包分析"><span class="nav-number">1.0.5.</span> <span class="nav-text">实践(抓包分析)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.0.6.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结束语"><span class="nav-number">1.0.7.</span> <span class="nav-text">结束语</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jiar</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+		<script type="text/javascript">
+		_hcwp = window._hcwp || [];
+
+		_hcwp.push({widget:"Bloggerstream", widget_id: 93311, selector:".hc-comment-count", label: "{\%COUNT%\}" });
+
+		
+		_hcwp.push({widget:"Stream", widget_id: 93311, xid: "2017/08/11/TCP三次握手简介/"});
+		
+
+		(function() {
+		if("HC_LOAD_INIT" in window)return;
+		HC_LOAD_INIT = true;
+		var lang = (navigator.language || navigator.systemLanguage || navigator.userLanguage || "en").substr(0, 2).toLowerCase();
+		var hcc = document.createElement("script"); hcc.type = "text/javascript"; hcc.async = true;
+		hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/93311/"+lang+"/widget.js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hcc, s.nextSibling);
+		})();
+		</script>
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("JaHzdspdCePEVSkcxp5vTzco-gzGzoHsz", "1HXQfPBkBx2xAsJgQLPaIStx");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
