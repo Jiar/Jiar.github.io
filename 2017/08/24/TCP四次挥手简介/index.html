@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"jiar.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="TCP四次挥手简介简书阅读地址在这里 阅读前提示：因为有部分知识会涉及到作者的另一篇博文《TCP三次握手简介》中的内容，建议先跳转阅读，传送门在这里。">
+  <meta name="description" content="简书阅读地址在这里 阅读前提示：因为有部分知识会涉及到作者的另一篇博文《TCP三次握手简介》中的内容，建议先跳转阅读，传送门在这里。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TCP四次挥手简介">
 <meta property="og:url" content="https://jiar.github.io/2017/08/24/TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E7%AE%80%E4%BB%8B/index.html">
 <meta property="og:site_name" content="Jiar&#39;s Blog">
-<meta property="og:description" content="TCP四次挥手简介简书阅读地址在这里 阅读前提示：因为有部分知识会涉及到作者的另一篇博文《TCP三次握手简介》中的内容，建议先跳转阅读，传送门在这里。">
+<meta property="og:description" content="简书阅读地址在这里 阅读前提示：因为有部分知识会涉及到作者的另一篇博文《TCP三次握手简介》中的内容，建议先跳转阅读，传送门在这里。">
 <meta property="og:locale">
 <meta property="og:image" content="https://jiar.github.io/2017/08/24/TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E7%AE%80%E4%BB%8B/tcp_hand_wave_detail.png">
 <meta property="og:image" content="https://jiar.github.io/2017/08/24/TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E7%AE%80%E4%BB%8B/tcp_head.png">
@@ -39,7 +39,7 @@
 <meta property="og:image" content="https://jiar.github.io/2017/08/24/TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E7%AE%80%E4%BB%8B/wireshark_tcp_wave_fourth.png">
 <meta property="og:image" content="https://jiar.github.io/images/Dingyuehao.jpg">
 <meta property="article:published_time" content="2017-08-24T07:34:53.000Z">
-<meta property="article:modified_time" content="2020-11-11T03:05:11.795Z">
+<meta property="article:modified_time" content="2022-02-14T09:20:13.475Z">
 <meta property="article:author" content="Jiar">
 <meta property="article:tag" content="计算机网络">
 <meta property="article:tag" content="TCP">
@@ -194,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-11-11 11:05:11" itemprop="dateModified" datetime="2020-11-11T11:05:11+08:00">2020-11-11</time>
+                <time title="Modified: 2022-02-14 17:20:13" itemprop="dateModified" datetime="2022-02-14T17:20:13+08:00">2022-02-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -217,8 +217,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="TCP四次挥手简介"><a href="#TCP四次挥手简介" class="headerlink" title="TCP四次挥手简介"></a>TCP四次挥手简介</h1><p><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/a57a40163d4b">简书阅读地址在这里</a></p>
-<p>阅读前提示：因为有部分知识会涉及到作者的另一篇博文《TCP三次握手简介》中的内容，建议先跳转阅读，<a target="_blank" rel="noopener" href="http://blog.jiar.vip/2017/08/11/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E7%AE%80%E4%BB%8B">传送门在这里</a>。</p>
+        <p><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/a57a40163d4b">简书阅读地址在这里</a></p>
+<p>阅读前提示：因为有部分知识会涉及到作者的另一篇博文《TCP三次握手简介》中的内容，建议先跳转阅读，<a target="_blank" rel="noopener" href="http://blog.jiar.me/2017/08/11/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E7%AE%80%E4%BB%8B">传送门在这里</a>。</p>
 <p><img src="/2017/08/24/TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E7%AE%80%E4%BB%8B/tcp_hand_wave_detail.png" alt="TCP四次挥手（原创图片）"></p>
 <a id="more"></a>
 
@@ -323,7 +323,10 @@
     <a href="/2017/08/11/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E7%AE%80%E4%BB%8B/" rel="prev" title="TCP三次握手简介">
       <i class="fa fa-chevron-left"></i> TCP三次握手简介
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2019/02/13/Multi-tier-UIScrollView-nested-scrolling-solution/" rel="next" title="多层 UIScrollView 嵌套滚动解决方案">
+      多层 UIScrollView 嵌套滚动解决方案 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -382,7 +385,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">TCP四次挥手简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E9%A6%96%E9%83%A8%E7%AE%80%E4%BB%8B"><span class="nav-number">1.0.1.</span> <span class="nav-text">TCP首部简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E8%BF%87%E7%A8%8B"><span class="nav-number">1.0.2.</span> <span class="nav-text">TCP四次挥手过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%A5%E6%89%8B%E8%BF%87%E7%A8%8B"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">挥手过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%8F%98%E5%8C%96"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">状态变化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-TIME-WAIT-%E7%8A%B6%E6%80%81%E8%A6%81%E7%AD%89%E5%BE%85-2MSL-%E4%B9%8B%E5%90%8E%E6%89%8D%E5%85%B3%E9%97%AD%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.0.3.</span> <span class="nav-text">为什么 TIME_WAIT 状态要等待 2MSL 之后才关闭连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">1.0.4.</span> <span class="nav-text">为什么要四次挥手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5-%E6%8A%93%E5%8C%85%E5%88%86%E6%9E%90"><span class="nav-number">1.0.5.</span> <span class="nav-text">实践(抓包分析)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.0.6.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9D%9F%E8%AF%AD"><span class="nav-number">1.0.7.</span> <span class="nav-text">结束语</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E9%A6%96%E9%83%A8%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">TCP首部简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">TCP四次挥手过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%A5%E6%89%8B%E8%BF%87%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">挥手过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%8F%98%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">状态变化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-TIME-WAIT-%E7%8A%B6%E6%80%81%E8%A6%81%E7%AD%89%E5%BE%85-2MSL-%E4%B9%8B%E5%90%8E%E6%89%8D%E5%85%B3%E9%97%AD%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.</span> <span class="nav-text">为什么 TIME_WAIT 状态要等待 2MSL 之后才关闭连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">4.</span> <span class="nav-text">为什么要四次挥手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5-%E6%8A%93%E5%8C%85%E5%88%86%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">实践(抓包分析)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9D%9F%E8%AF%AD"><span class="nav-number">7.</span> <span class="nav-text">结束语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -396,7 +399,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -407,7 +410,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -434,7 +437,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

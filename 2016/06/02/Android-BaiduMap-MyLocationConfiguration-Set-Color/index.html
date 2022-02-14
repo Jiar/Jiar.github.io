@@ -27,14 +27,14 @@
 <meta property="og:site_name" content="Jiar&#39;s Blog">
 <meta property="og:description" content="如何正确设置 MyLocationConfiguration 的 accuracyCircleStrokeColor 与 accuracyCircleFillColor 属性的颜色值 Android开发中，经常用到地图定位服务，百度地图api正提供了这样的服务，然而客户需求的效果和api自带的样式不尽相同，那么就需要我们就行一些定制化操作了。">
 <meta property="og:locale">
-<meta property="og:image" content="https://jiar.github.io/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0001.png">
-<meta property="og:image" content="https://jiar.github.io/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0002.png">
-<meta property="og:image" content="https://jiar.github.io/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0003.png">
-<meta property="og:image" content="https://jiar.github.io/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0004.png">
-<meta property="og:image" content="https://jiar.github.io/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-result.png">
+<meta property="og:image" content="https://jiar.github.io/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0001.png">
+<meta property="og:image" content="https://jiar.github.io/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0002.png">
+<meta property="og:image" content="https://jiar.github.io/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0003.png">
+<meta property="og:image" content="https://jiar.github.io/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0004.png">
+<meta property="og:image" content="https://jiar.github.io/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-result.png">
 <meta property="og:image" content="https://jiar.github.io/images/Dingyuehao.jpg">
 <meta property="article:published_time" content="2016-06-02T06:14:23.000Z">
-<meta property="article:modified_time" content="2020-11-11T03:04:15.083Z">
+<meta property="article:modified_time" content="2022-02-14T08:55:25.035Z">
 <meta property="article:author" content="Jiar">
 <meta property="article:tag" content="Android">
 <meta property="article:tag" content="BaiduMap">
@@ -42,7 +42,7 @@
 <meta property="article:tag" content="accuracyCircleStrokeColor">
 <meta property="article:tag" content="accuracyCircleFillColor">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://jiar.github.io/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0001.png">
+<meta name="twitter:image" content="https://jiar.github.io/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0001.png">
 
 <link rel="canonical" href="https://jiar.github.io/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/">
 
@@ -192,7 +192,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-11-11 11:04:15" itemprop="dateModified" datetime="2020-11-11T11:04:15+08:00">2020-11-11</time>
+                <time title="Modified: 2022-02-14 16:55:25" itemprop="dateModified" datetime="2022-02-14T16:55:25+08:00">2022-02-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -219,20 +219,20 @@
 <p>Android开发中，经常用到地图定位服务，百度地图api正提供了这样的服务，然而客户需求的效果和api自带的样式不尽相同，那么就需要我们就行一些定制化操作了。</p>
 <a id="more"></a>
 
-<p>如下图，百度地图api默认提供了蓝色的外边框（accuracyCircleStrokeColor），淡蓝色的内部填充（accuracyCircleFillColor）<br><img src="/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0001.png" alt="百度地图api MyLocationConfiguration 默认样式"></p>
+<p>如下图，百度地图api默认提供了蓝色的外边框（accuracyCircleStrokeColor），淡蓝色的内部填充（accuracyCircleFillColor）<br><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0001.png" alt="百度地图api MyLocationConfiguration 默认样式"></p>
 <p>因为客户的需求是修改填充部分颜色，接下来我们通过代码来修改内部填充色：</p>
 <p>设置填充色为红色</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MyLocationConfiguration confit &#x3D; new MyLocationConfiguration(LocationMode.FOLLOWING, true, mCurrentMarker);</span><br><span class="line">&#x2F;&#x2F; 红色</span><br><span class="line">confit.accuracyCircleFillColor &#x3D; 0xFF0000FF;</span><br><span class="line">mBaiduMap.setMyLocationConfigeration(confit);</span><br></pre></td></tr></table></figure>
 
-<p>设置后，运行效果如下：<br><img src="/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0002.png" alt="内部红色填充色"></p>
+<p>设置后，运行效果如下：<br><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0002.png" alt="内部红色填充色"></p>
 <p>设置填充色为蓝色</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MyLocationConfiguration confit &#x3D; new MyLocationConfiguration(LocationMode.COMPASS, true, mCurrentMarker);</span><br><span class="line">&#x2F;&#x2F; 蓝色</span><br><span class="line">confit.accuracyCircleFillColor &#x3D; 0xFFFF0000;</span><br><span class="line">mBaiduMap.setMyLocationConfigeration(confit);</span><br></pre></td></tr></table></figure>
 
-<p>设置后，运行效果如下：<br><img src="/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0003.png" alt="内部蓝色填充色"></p>
+<p>设置后，运行效果如下：<br><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0003.png" alt="内部蓝色填充色"></p>
 <p>设置填充色为绿色</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MyLocationConfiguration confit &#x3D; new MyLocationConfiguration(LocationMode.COMPASS, true, mCurrentMarker);</span><br><span class="line">&#x2F;&#x2F; 绿色</span><br><span class="line">confit.accuracyCircleFillColor &#x3D; 0xFF00FF00;</span><br><span class="line">mBaiduMap.setMyLocationConfigeration(confit);</span><br></pre></td></tr></table></figure>
 
-<p>设置后，运行效果如下：<br><img src="/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0004.png" alt="内部绿色填充色"></p>
+<p>设置后，运行效果如下：<br><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-0004.png" alt="内部绿色填充色"></p>
 <p>到此，颜色修改成功！accuracyCircleStrokeColor与accuracyCircleFillColor的设置方式一样。<br>可是问题来了，小伙伴们会说，这个颜色的值要怎么设置呢。这个“0xFF0000FF”，“0xFFFF0000”，“0xFF00FF00”都是怎么来的呢？接下来就来回答这个问题。<br>我们首先会想到的解决方式是去点进 MyLocationConfiguration 的类里面去查看有没有相关方法或是提示。<br>在 MyLocationConfiguration 中我们发现了 accuracyCircleFillColor 和 accuracyCircleStrokeColor 被设置了默认值（其实我们会发现这两个分别是构造默认的蓝色边框和淡蓝色填充需要用到的值）</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public int accuracyCircleFillColor &#x3D; 4521984;</span><br><span class="line">public int accuracyCircleStrokeColor &#x3D; 4653056;</span><br></pre></td></tr></table></figure>
 <p>还有一个比较重要的<code>a</code>方法（真想吐槽这个方法名）：</p>
@@ -240,7 +240,7 @@
 <p>在 MyLocationConfiguration 其中的两个个构造方法中，我们会发现api都调用了<code>a</code>方法给accuracyCircleFillColor和accuracyCircleStrokeColor重新设值（下面给出了其中一个构造的代码）</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public MyLocationConfiguration(MyLocationConfiguration.LocationMode var1, boolean var2, BitmapDescriptor var3) &#123;</span><br><span class="line">	if(var1 &#x3D;&#x3D; null) &#123;</span><br><span class="line">		var1 &#x3D; MyLocationConfiguration.LocationMode.NORMAL;</span><br><span class="line">	&#125;</span><br><span class="line">	this.locationMode &#x3D; var1;</span><br><span class="line">	this.enableDirection &#x3D; var2;</span><br><span class="line">	this.customMarker &#x3D; var3;</span><br><span class="line">	this.accuracyCircleFillColor &#x3D; this.a(this.accuracyCircleFillColor);</span><br><span class="line">	this.accuracyCircleStrokeColor &#x3D; this.a(this.accuracyCircleStrokeColor);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>不难发现，<code>a</code>方法在构造颜色中起了很重要的作用，算法好的同学们，可能很容易推测验证出<code>a</code>方法的作用。我在这里也不深究<code>a</code>方法如何构造出需要的颜色。下面我通过一张说明图来解释如果构造自己需要的颜色。<br><img src="/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-result.png" alt="颜色构造说明"></p>
+<p>不难发现，<code>a</code>方法在构造颜色中起了很重要的作用，算法好的同学们，可能很容易推测验证出<code>a</code>方法的作用。我在这里也不深究<code>a</code>方法如何构造出需要的颜色。下面我通过一张说明图来解释如果构造自己需要的颜色。<br><img src="/2016/06/02/Android-BaiduMap-MyLocationConfiguration-Set-Color/Android-BaiduMap-MyLocationConfiguration-Set-Color-result.png" alt="颜色构造说明"></p>
 <p>Now, all is OK…</p>
 <p>欢迎关注我的个人微信订阅号，我将不定期分享开发方面的干货。</p>
 <p><img src="/images/Dingyuehao.jpg" alt="Jiar&#39;s 微信订阅号"></p>
@@ -344,7 +344,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -355,7 +355,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -382,7 +382,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

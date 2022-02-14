@@ -20,17 +20,17 @@
     var CONFIG = {"hostname":"jiar.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="UITextField光标异常如何解决在iOS开发中，用xib写了那么多的界面，我也是头一次遇到这样一个问题，如下图所示：">
+  <meta name="description" content="在iOS开发中，用xib写了那么多的界面，我也是头一次遇到这样一个问题，如下图所示：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="UITextField光标异常">
 <meta property="og:url" content="https://jiar.github.io/2016/07/05/UITextField%E5%85%89%E6%A0%87%E5%BC%82%E5%B8%B8/index.html">
 <meta property="og:site_name" content="Jiar&#39;s Blog">
-<meta property="og:description" content="UITextField光标异常如何解决在iOS开发中，用xib写了那么多的界面，我也是头一次遇到这样一个问题，如下图所示：">
+<meta property="og:description" content="在iOS开发中，用xib写了那么多的界面，我也是头一次遇到这样一个问题，如下图所示：">
 <meta property="og:locale">
 <meta property="og:image" content="https://jiar.github.io/2016/07/05/UITextField%E5%85%89%E6%A0%87%E5%BC%82%E5%B8%B8/UITextField%E5%85%89%E6%A0%87%E5%BC%82%E5%B8%B8.gif">
 <meta property="og:image" content="https://jiar.github.io/images/Dingyuehao.jpg">
 <meta property="article:published_time" content="2016-07-05T02:02:38.000Z">
-<meta property="article:modified_time" content="2020-11-11T03:05:57.875Z">
+<meta property="article:modified_time" content="2022-02-14T08:57:37.520Z">
 <meta property="article:author" content="Jiar">
 <meta property="article:tag" content="iOS">
 <meta property="article:tag" content="UITextField">
@@ -185,7 +185,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-11-11 11:05:57" itemprop="dateModified" datetime="2020-11-11T11:05:57+08:00">2020-11-11</time>
+                <time title="Modified: 2022-02-14 16:57:37" itemprop="dateModified" datetime="2022-02-14T16:57:37+08:00">2022-02-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -208,7 +208,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="UITextField光标异常如何解决"><a href="#UITextField光标异常如何解决" class="headerlink" title="UITextField光标异常如何解决"></a>UITextField光标异常如何解决</h2><p>在<code>iOS</code>开发中，用<code>xib</code>写了那么多的界面，我也是头一次遇到这样一个问题，如下图所示：<br><img src="/2016/07/05/UITextField%E5%85%89%E6%A0%87%E5%BC%82%E5%B8%B8/UITextField%E5%85%89%E6%A0%87%E5%BC%82%E5%B8%B8.gif" alt="UITextField光标异常"></p>
+        <p>在<code>iOS</code>开发中，用<code>xib</code>写了那么多的界面，我也是头一次遇到这样一个问题，如下图所示：<br><img src="/2016/07/05/UITextField%E5%85%89%E6%A0%87%E5%BC%82%E5%B8%B8/UITextField%E5%85%89%E6%A0%87%E5%BC%82%E5%B8%B8.gif" alt="UITextField光标异常"></p>
 <a id="more"></a>
 
 <p>这是一个普通的登录界面，因为界面简单，采用xib实现，还有可能会对<code>UITextField</code>光标产生影响的是项目使用了<code>IQKeyboardManager</code>。<br>我在<code>viewDidLoad</code>加入了<code>[self.phoneField becomeFirstResponder];</code>使得输入手机号的文本框获取焦点，于是产生了上图显示的问题。</p>
@@ -306,7 +306,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#UITextField%E5%85%89%E6%A0%87%E5%BC%82%E5%B8%B8%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3"><span class="nav-number">1.</span> <span class="nav-text">UITextField光标异常如何解决</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -320,7 +319,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -331,7 +330,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -358,7 +357,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
